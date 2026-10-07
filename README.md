@@ -1,5 +1,12 @@
 # SmartRouter
 
+## Development roadmap
+
+The [corrected development plan](docs/DEVELOPMENT_PLAN.md) proposes a portable,
+skills-first release with explicit permission boundaries and cost evaluation
+before Research-Kit or Moonzila integration. This is a plan, not an implemented
+router or a measured savings claim. The existing policy below is preserved.
+
 SmartRouter is a reusable instruction policy for a **Smart Model Router + High-Quality Coding Agent**. It chooses the least expensive model tier that can safely meet the highest quality standard.
 
 ## Usage

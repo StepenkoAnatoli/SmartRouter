@@ -146,9 +146,9 @@ Revision: [`034daabaac5038bfc5f0a5c54a30df59baaffb3a`](https://github.com/ginson
 
 ## Consolidated recommendation
 
-1. **Ship three small usable skills, one authority**, not a router service. Use eligible-direct first, no automatic paid classifier. Review/eval-prep are procedures, not additional selectors.
+1. **Plan a later three-skill package with one authority**, not a router service. This PR delivers planning documents only; usable skills require separate authorization. The proposed policy prefers eligible direct work with no automatic paid classifier; review/eval-prep would be procedures, not additional selectors.
 2. **Fail closed at every stage and fallback.** Unknown actor/path/required capability/pricing under strict caps and empty candidate sets are explicit blockers. Verify zero sends at real callsites in later hosts.
 3. **Preserve task contracts and exact context.** Tool/refusal/media/structured outcomes are contract-specific; verifier failures do not accept. Cache keys include relevant authority/price/check revisions and exact meaningful content.
 4. **Bound and account every attempt.** Capability escalation is not a price ladder. No replay after ambiguous effects/committed output; cancellation/restart reconcile first. Count router/review/sunk costs without double counting.
 5. **Measure before growth.** Four fair arms, approved preregistration, actual cost per verified success, complete accounting, hard severe-failure stops and explicit promote/simplify/reject/inconclusive outcomes.
-6. **Prefer original policy over copied implementations.** No runtime dependency now. MIT/Apache ideas do not establish correctness; noncommercial/source-available/no-grant/AGPL materials need appropriate permission/compatibility checks before any future copy. SmartRouter's chosen MIT grant covers only its newly authored preview.
+6. **Prefer original policy over copied implementations.** No runtime dependency now. MIT/Apache ideas do not establish correctness; noncommercial/source-available/no-grant/AGPL materials need appropriate permission/compatibility checks before any future copy. SmartRouter's chosen MIT grant covers only the newly authored planning documents listed in LICENSE, not upstream or historical content.

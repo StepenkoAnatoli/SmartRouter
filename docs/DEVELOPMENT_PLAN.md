@@ -2,7 +2,7 @@
 
 Date: 2026-10-08. Status: **plan-only amendment in draft PR #2**.
 
-Authorized delivery: corrected development plan, README planning guide and retained pinned survey. No usable skills, templates for installation, executable router, paid/live evaluation, Research-Kit or Moonzila modification, or merge. Earlier skill additions are removed from this PR's current tree and diff; historical commits are not an installation recommendation. This document specifies future milestones and acceptance requirements, not instructions to dispatch work or claims those milestones ran.
+Authorized delivery: corrected development plan, README planning guide, retained pinned survey and two owner-authorized reviewer handoff documents. No usable skills, templates for installation, executable router, paid/live evaluation, Research-Kit or Moonzila modification, or merge. Earlier skill additions are removed from this PR's current tree and diff; historical commits are not an installation recommendation. This document specifies future milestones and acceptance requirements, not instructions to dispatch work or claims those milestones ran.
 
 ## 1. Goal and success measure
 
@@ -14,7 +14,9 @@ Portable skills come first; hosts own actual authorization, model identity/dispa
 
 ## 2. Plan-only scope and proposed future skills
 
-Current delivery contains only README.md, this development plan, the pinned survey and the documentation-scoped LICENSE. No SKILL.md, skill reference directory, installer, runnable code or release changelog is delivered. The earlier preview acceptance record is removed because it covered skills outside the revised scope.
+Current delivery contains exactly six documents: README.md, LICENSE, docs/DEVELOPMENT_PLAN.md, docs/ROUTER_SURVEY.md, [docs/ACCEPTANCE_PACKET_b7e4827.md](ACCEPTANCE_PACKET_b7e4827.md) and [docs/REVIEW_BRIEF_4654158.md](REVIEW_BRIEF_4654158.md). The two reviewer handoffs are explicitly authorized publication of preparation work, not completed reviews. No SKILL.md, skill reference directory, installer, runnable code or release changelog is delivered. The earlier skill-preview acceptance record remains removed.
+
+Both handoffs retain their immutable target revisions, original four-document inventories, line references and hashes. Publishing them and this inventory/license/readme delta creates a new revision. A review of either historical target cannot accept the new head without delta inspection and full-revision reaffirmation; all verdicts/owner acknowledgements remain pending. The normative decision rules and fixture bodies are unchanged by this handoff-publication amendment.
 
 Proposed later deliverables, requiring separate authorization:
 
@@ -27,7 +29,7 @@ Proposed later deliverables, requiring separate authorization:
 
 If approved later, follow Agent Skills frontmatter/name/description constraints, compact bodies and pinned sibling references. Discover through existing host mechanisms rather than inventing an installer. Do not preapprove actions through metadata.
 
-Plan acceptance: all seven findings and the five follow-up audit findings have explicit outcomes and evidence requirements; relative links resolve; the four-file documentation scope is verified; fixtures supply decision-relevant inputs; future implementation/pilot claims remain untested; licensing is scoped; no secrets or upstream code copied. Phase 1 additionally requires the independent acceptance procedure in section 15; author checks alone cannot close that gate. Future skill packaging and runtime acceptance are not satisfied by this plan.
+Plan acceptance: all seven findings and the five follow-up audit findings have explicit outcomes and evidence requirements; relative links resolve; the six-file documentation scope is verified; fixtures supply decision-relevant inputs; future implementation/pilot claims remain untested; licensing is scoped; no secrets or upstream code copied. Phase 1 additionally requires the independent acceptance procedure in section 15; author checks alone cannot close that gate. Future skill packaging and runtime acceptance are not satisfied by this plan.
 
 ## 3. Seven review findings: corrections and blocking acceptance
 
@@ -303,7 +305,7 @@ D01-D02/E01 use fresh host evidence, known identities, available mandatory check
 
 Every later scenario review must record: scenario ID; exact fixture/deviations; **full reviewed Git revision**; reviewer/date; ordered gate reasoning and observed result; pinned evidence reference; command/cwd/environment if a test was actually run; prohibited behavior observed; disposition `pass / fail / unreviewed`; correction and recheck evidence; evidence level `manual semantic review / packaging / executed host test / authorized model trial`. A blank or unreviewed record never counts as pass. Immutable revision references belong in review output/PR discussion rather than a self-referential hash in the same commit.
 
-Plan validation now: four-file documentation allowlist, resolved local links/anchors, UTF-8/LF, secret-pattern scan, no SKILL.md/product code/installer, all seven criteria, A1-A5 corrections, all leaf fixtures in the S01-S24 families and R/V/P/D/E/B cases present, scoped license, exact remote content and PR diff. Manual specification review checks coherent boundary wording, not runtime compliance.
+Plan validation now: six-file documentation allowlist, resolved local links/anchors, UTF-8/LF, secret-pattern scan, no SKILL.md/product code/installer, all seven criteria, A1-A5 corrections, all leaf fixtures in the S01-S24 families and R/V/P/D/E/B cases present, scoped license, exact remote content and PR diff. Manual specification review checks coherent boundary wording, not runtime compliance.
 
 Future Phase 2 additionally requires skill metadata/name/reference checks and recorded semantic reviews at its full revision; future hosts require real no-send/effect/payment callsite, replay, cancellation, restart and shared-accounting tests. Packaging or phrase matching is not safety proof. Required failed checks stop the affected release; disclosure is no waiver. Live capability/client/economic claims need their actual authorized environment and evidence.
 
@@ -354,7 +356,7 @@ Acceptance: actual host no-send/privacy/approval tests, serial cancellation/rest
 | Phase | Deliverable | Exit gate |
 | --- | --- | --- |
 | 0: discovery | Instructions, scope, owner license choice, pinned survey/gaps | No guessed blocking facts; no copying without permission |
-| 1: specification (this PR; plan-only) | Self-contained ordered gates, cost/verification/retry requirements, seven-finding criteria, concrete fixtures and future migration | Four documentation files only; coherent boundaries and resolved links; independent acceptance at full revision plus owner acknowledgement under section 15; no unresolved blocking finding; no usable skills; draft/unmerged; author self-review insufficient |
+| 1: specification (this PR; plan-only) | Self-contained ordered gates, cost/verification/retry requirements, seven-finding criteria, concrete fixtures and future migration | Six documentation files only, including historical reviewer handoffs; coherent boundaries and resolved links; independent acceptance at full revision plus owner acknowledgement under section 15; no unresolved blocking finding; no usable skills; draft/unmerged; author self-review insufficient |
 | 2: future skill preview (separate authorization) | Proposed three skills, references/records, completed single-authority migration | Valid packaging plus semantic review at full revision; every scenario has evidence/disposition; no competing old policy; runtime claims still untested |
 | 3: evaluation preparation | Approved preregistration and already-existing named evaluation host/model qualification/accounting evidence | All mandatory host/control checks pass before trial; no blanks/unknown blocking facts; repeat-aware statistics/holdout frozen; separate spend/egress approval required, absent host blocks here |
 | 4: authorized exploratory/holdout pilot | Inventoried report/ledger, explicit report status and frozen decision | Complete report may close reject/inconclusive with disclosed gaps; complete accounting/checks and qualifying decision required for adoption recommendations; no severe failure waiver, recovery/reservations persist independently |

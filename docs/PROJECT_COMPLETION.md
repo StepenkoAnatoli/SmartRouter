@@ -61,3 +61,18 @@ merge and why the normal step was not used.
 - `fixture_checks.py` — Phase-1 smoke harness, now first-class on main.
 - Updated `tools/validate_skills.py` — T-02/T-03/T-04 refactor results (helper extraction, `--strict`, malformed-YAML nonzero exit).
 - `docs/PHASE4_PILOT_REPORT.md` + this completion record.
+
+## 6. Release provenance — v1.0.0-pilot (for future re-audits)
+
+| Field | Value |
+| --- | --- |
+| Tag name | `v1.0.0-pilot` (annotated) |
+| Tagged at commit | `b6e04fd525fa886b07d149ab5a7f88da3f7b7c89` — the completion tree right after PRs #8/#9 merges and the v1.0.0-pilot packet/P02 brief |
+| Tag object SHA | `3aae815b5566e23b91da64df501c1df6a24ad2d2` |
+| GitHub Release id | `408947843` |
+| Release URL | https://github.com/StepenkoAnatoli/SmartRouter/releases/tag/v1.0.0-pilot |
+| Release asset | `SmartRouter-v1.0.0-pilot.zip` — 90,260 bytes, 31 entries, SHA-1 `920007b8af24a3fc02430257fbe39ad37d5f47ec` (also committed as `tools/release/SmartRouter-v1.0.0-pilot.zip` in `1d3b9b6`) |
+| Release notes body length | 2215 characters (contents table + verification basis + gates-preserved section) |
+| Draft / prerelease | `false` / `false` (a real release, publicly visible) |
+| In-repo content commits after the tag | `23a9ef0` (packet), `2f4b141` (completion), `1d3b9b6` (zip), `55713f3` (prices verified), `badeb03` (audit), `c0337c8` (arm matrix / walkthrough), `8a085a6` (row-4 pre-fill), `8526af7` (reviewer record), `8a2c08c` (rate re-verify), `6d46481` (record freshness) — **none change skill semantics**; the released artefacts' behavior is what was tagged. |
+| Consumer handoff notes | `docs/HANDOFF_MOONZILA.md`, `docs/HANDOFF_RESEARCH_KIT.md` — delivered to their respective owners for Phase 5/6/7 gate awareness. |

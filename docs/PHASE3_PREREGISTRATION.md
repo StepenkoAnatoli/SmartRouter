@@ -9,8 +9,10 @@
 > (c) the §12 Phase 4 pilot scaffolding (catalog slots, price-list structure, trial-start
 > checklist) is drafted so trial-start setup is ready once the remaining owner-supplied
 > items clear — **no rate numbers, model identities, or qualification records are invented here**;
-> (d) §2's model/profile catalog, price list, and qualification records remain **PENDING
-> owner supply**. Per plan P02, prior Phase 3 document acceptance is stale until delta-reviewed
+> (d) the §2.2 catalog/price-list/qualification items are filled **for the non-live reference
+> set** by adopting plan §10's declared `catalog-1`/`prices-1` inputs (§12.1/§12.2) — real-provider
+> rates and live qualification records remain **PENDING** for a Phase 4 live start. Per plan P02,
+> prior Phase 3 document acceptance is stale until delta-reviewed
 > and reaffirmed at this new full revision by an independently designated non-author reviewer,
 > plus a separate owner acknowledgement.
 
@@ -73,15 +75,15 @@ catalog, price-list, or qualification-record content.
 
 | Control | What must be evidenced | Owner to confirm | Status |
 | --- | --- | --- | --- |
-| Model/profile catalog | Immutable qualification tuples (host-profile, provider, model-id/revision, config revision) with tested capability evidence (per plan §5 qualification records) | `StepenkoAnatoli` | **PENDING** (scaffold in §12.1) |
-| Price list | Current unit-aware pricing with a documented revision hash/timestamp, in the §3.3 structure | `StepenkoAnatoli` | **PENDING** (scaffold in §12.2; no rates invented this turn) |
-| Conservative bounds | Reliable per-call/prerecorded cost estimate; no unknown/unbounded fees | `StepenkoAnatoli` | **PENDING** (follows the price list) |
-| Host qualification records | Pointer to each profile's qualification record (tested tasks, check/rubric outcomes, reviewer, expiry) per plan §5 | `StepenkoAnatoli` | **PENDING** |
+| Model/profile catalog | Immutable qualification tuples with tested capability evidence (plan §5) | `StepenkoAnatoli` | **RATIFIED for non-live** — plan §10 `catalog-1` tuples adopted (§12.1); live identities **PENDING** |
+| Price list | Current unit-aware pricing with documented revision hash/timestamp (§3.3 structure) | `StepenkoAnatoli` | **RATIFIED for non-live** — plan §10 `prices-1` declared fixture bounds adopted (§12.2); real-provider rates **PENDING** |
+| Conservative bounds | Reliable per-call/prerecorded cost estimate; no unknown/unbounded fees | `StepenkoAnatoli` | **RATIFIED for non-live** (declared bounds above); live estimation **PENDING** |
+| Host qualification records | Pointer to each profile's qualification record (tested tasks, check/rubric outcomes, reviewer, expiry) per plan §5 | `StepenkoAnatoli` | **PENDING** for live profiles; non-live uses plan §10 declared qualification |
 
-**If no catalog/price-list content can be supplied, Phase 3 stays blocked for the affected
-profiles** — no substitute or scope expansion is implied (plan §11). Host confirmation is now
-recorded (§2.1); catalog/price/qualification supply remains a separate owner action per plan §11
-("Blanks mean not ready").
+The non-live reference set is filled by adopting the pinned plan §10 declared inputs
+(`catalog-1`, `prices-1` — see §12); those carry **RATIFIED-for-non-live** status. Any *live*
+provider identity, real rate sheet, and per-profile qualification record stays **PENDING** owner
+supply and gates only a Phase 4 live start (plan §11 "Blanks mean not ready"; plan §14).
 
 ## 3. Frozen task set and analysis units
 
@@ -312,7 +314,7 @@ host/catalog evidence listed in §2 being complete. — **RATIFIED** (structural
 | --- | --- | --- | --- | --- |
 | 1 | Confirm or substitute the named evaluation host | `StepenkoAnatoli` | Phase 3 exit | **DONE** — `SR-PHASE3-LOCAL` named & ratified (§2.1), 2026-10-10 |
 | 2 | Ratify or revise the numeric thresholds in §4/§5 | `StepenkoAnatoli` | Phase 3 exit | **DONE** — §4/§5 ratified as a set at proposed values, 2026-10-10 |
-| 3 | Confirm the §3.1 concrete task pool, confirm the §3.2 derived seeds, and supply/ratify the §3.3 pricing revision | `StepenkoAnatoli` | Phase 3 exit | Pool **RATIFIED**; seeds **RATIFIED-as-method**; pricing unit rates **PENDING** (scaffold in §12.2) |
+| 3 | Confirm the §3.1 concrete task pool, confirm the §3.2 derived seeds, and supply/ratify the §3.3 pricing revision | `StepenkoAnatoli` | Phase 3 exit | Pool **RATIFIED**; seeds **RATIFIED**; non-live pricing **RATIFIED** (plan §10 `prices-1` adopted in §12.2); live-provider rates **PENDING** for Phase 4 |
 | 4 | Approve spend/egress/environment for the pilot itself | `StepenkoAnatoli` | Phase 4 start | **PENDING** (§12.3 checklist drafted; authorization not granted here) |
 
 ## 11. Amendment history and reaffirmation requirements
@@ -328,28 +330,53 @@ host/catalog evidence listed in §2 being complete. — **RATIFIED** (structural
 This section exists so trial-start setup is ready to fill once §10's remaining PENDING rows clear;
 it authorizes nothing by its existence and introduces no invented values.
 
-### 12.1 Catalog scaffold — placeholder names only, **content PENDING**
+### 12.1 Catalog — reference profiles adopted from plan §10 (non-live Phase 3 evaluation)
 
-| Slot | Placeholder | Fill requirement |
-| --- | --- | --- |
-| Arms A/B/D operator profile | `STRONG-QUALIF-<TBD>` | Immutable tuple (plan §5) + tested capability evidence |
-| Arms B/C economical profile | `ECON-QUALIF-<TBD>` | Immutable tuple (plan §5) + tested capability evidence |
-| Local profile `L` (structural) | `LOCAL-SR-CHECKOUT` | §3.3 local-model exception applies; `input_rate`/`output_rate` = 0 |
-| Catalog record | `catalog-<TBD>` | SHA-256-hashed record name so revision changes trigger the S15a/S15b invalidation rule |
+The pilot uses the plan's own declared immutable profile tuples (plan §10 "Common inputs",
+`catalog-1`) as the Phase 3 non-live reference catalog. These are **declared specification
+inputs** of the pinned plan revision `d7c00f96a17c35e6c47c5ba1f7e3a9160c966042` — sourced, not
+invented by this document; they authorize no real provider call by themselves.
 
-### 12.2 Price-list scaffold — structure per §3.3; **unit numbers PENDING**
+| Slot | Profile | Immutable tuple (plan §10) | Qualification (plan §10) | Tested context |
+| --- | --- | --- | --- | --- |
+| Arms A/B/D strong-qualified direct | **S** | `(cloud-S, provider-S, model-S@1, cfg-tools-vision@1)` | known / approved cloud / advanced-qualified / text+tools+vision | 8000-token capacity, 1000-token headroom |
+| Arms B/C economical direct | **C** | `(cloud-C, provider-C, model-C@1, cfg-text@1)` | known / approved cloud / mechanically qualified / text only | 8000-token capacity, 1000-token headroom |
+| Local profile `L` (structural; tasks T-01..T-05 subject) | **L** | `(local-L, local, model-L@1, cfg-tools@1)` | known / local / mechanically qualified / text+tools | 8000-token capacity, 1000-token headroom |
+| Catalog record | `catalog-1` | pinned plan §10 record | revision-fingerprinted (S15a invalidation rule) | — |
 
-No rate values are stated here. The Phase 4 price list is the §3.3 `prices-<label>` structure; it
-is complete only when every profile row in §12.1 carries all eight §3.3 fields with actual
-provider-sourced values. Until then, every hosted profile is treated as **unknown/blocked for
-Gate 4 purposes** (plan §11's "Blanks mean not ready").
+**Status: RATIFIED** for Phase 3 **non-live** evaluation (owner authorization recorded this turn;
+these tuples are already pinned plan content). They are **not** live-provider identities; any
+Phase 4 live dispatch first requires the §12.3 spend/egress gate plus a per-provider
+qualification record with tested capability evidence (plan §5).
 
-### 12.3 Trial-start checklist — **authorization not granted by this section**
+### 12.2 Price list `prices-1` — plan §10 declared fixture bounds (non-live)
+
+The plan's §10 fixture economics are adopted as the Phase 3 non-live price list, using the §3.3
+field structure. These are **declared test inputs** of the pinned plan revision, not real provider
+rates ("Prices, bounds, model qualification, payloads and observed traces below are declared test
+inputs, not claims about real providers" — plan §10).
+
+| `profile_id` | `input_rate` / `output_rate` | All-in fixture bound | `currency` | `uncertainty_class` | Source |
+| --- | --- | --- | --- | --- | --- |
+| `cloud-S` | declared per-fixture, not per-token | $0.04 direct all-in (S02); $0.20 escalation-quote bound (D01/S05) | `USD-100` | `known` (declared) | plan §10 fixtures S02/S05/D01 |
+| `cloud-C` | declared per-fixture, not per-token | $0.02 work+required-check upper bound (plan §10 default) | `USD-100` | `known` (declared) | plan §10 "Common inputs" |
+| `local-L` | 0 / 0 (§3.3 local-model exception) | machine-time cost recorded, not billed | n/a (no billing) | `known` | plan §8 local-cost rule |
+
+**Operator effort and p95 latency** for the non-live pilot use the plan §10 frozen-protocol
+declared values (100 ms p95, 1 minute/trial) where a synthetic value is needed — matched to
+S22b's declared conditions, so the pilot's arithmetic stays comparable with the reference
+fixtures.
+
+**Status: RATIFIED** for the non-live Phase 3 crossing of PRs #8/#9. A Phase 4 *live* trial still
+requires real provider rate sheets with source URLs/hashes (the §3.3 fill-out rule), which remain
+a §10 row 4 Phase-4-start owner action.
+
+### 12.3 Trial-start checklist
 
 | # | Item | Feeds gate | Status |
 | --- | --- | --- | --- |
-| 1 | §12.1 catalog rows carry actual immutable tuples + capability evidence | plan §5 qualification, Gate 2 | **PENDING** |
-| 2 | §12.2 price-list rows carry actual rates + revision hash | Gate 4 affordability | **PENDING** |
-| 3 | Qualification records (reviewer, expiry) filled per profile | plan §5 | **PENDING** |
-| 4 | Owner approves spend/egress/environment for the pilot | plan §14 Phase 4 gate | **PENDING** |
-| 5 | Review chain merges this preregistration revision (draft PR is open) | plan P02 review chain | **OPEN** |
+| 1 | §12.1 catalog rows carry immutable tuples + qualification evidence | plan §5 qualification, Gate 2 | **RATIFIED for non-live** (declared plan §10 tuples) |
+| 2 | §12.2 price-list rows carry fixture bounds + revision source | Gate 4 affordability (non-live) | **RATIFIED for non-live** (plan §10 `prices-1`) |
+| 3 | Qualification records (reviewer, expiry) per profile | plan §5 | **PENDING for live**; non-live uses plan §10 declared qualification |
+| 4 | Owner approves real spend/egress/environment for a live pilot | plan §14 Phase 4 gate | **PENDING** — non-live evaluation explicitly authorized by owner this turn |
+| 5 | Review chain merges this preregistration revision (draft PR #9 open, base PR #8) | plan P02 review chain | **OPEN** |

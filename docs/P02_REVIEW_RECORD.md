@@ -6,7 +6,12 @@
 
 **Reviewed revision (full):** `2f4b14184a0b0d7c1eff9a163aa065ecaddd8a67`
 **Baseline compared:** `6d20b04df5dc09815d6d57cdd4f1a6aeb0d11f37`
-**Delta:** 5 commits, 9 files, +1056/−149. **Current tree at record-file time:** `8a085a6` (row-4 pre-fill only — outside the reviewed delta, tracked separately).
+**Delta:** 5 commits, 9 files, +1056/−149. **Current tree at record-file time:** `8a2c08c`
+— since `2f4b141` the tree has gained only **review/authorization artefacts** (`P02_REVIEW_BRIEF`,
+`P02_REVIEW_RECORD`, `PHASE4_LIVE_START_PACKET` build-ups, arm-matrix ledger, the v1.0.0-pilot
+release zip), **no delta-content changes**: the reviewed 9 files' semantics are unchanged.
+Freshness re-confirmed at `8a2c08c`: suite 79/79 exit 0, validator exit 0 (default + strict),
+smoke exit 0, re-run this pass.
 
 ## 1. Designation block — with honest provenance
 

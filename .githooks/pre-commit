@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+# Pre-commit hook: no commit is created unless the full regression gate passes
+# on the exact content being committed (HEAD + index). Fail-closed: any
+# stash failure, gate failure, or restore failure aborts the commit.
+set -u
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE
+export HOME="$REPO_ROOT"
+GATE="tools/run_regression.py"
+[ -f "$GATE" ] || { echo "pre-commit: $GATE missing — refusing commit" >&2; exit 1; }
+
+UNSTAGED=$(git diff --name-only)
+UNTRACKED=$(git ls-files --others --exclude-standard)
+STASHED=0
+if [ -n "$UNSTAGED$UNTRACKED" ]; then
+  git stash push -q --include-untracked --keep-index || {
+    echo "pre-commit: could not isolate staged tree — commit refused" >&2
+    exit 1
+  }
+  STASHED=1
+fi
+
+GATE_EXIT=0
+python "$GATE" || GATE_EXIT=$?
+
+if [ "$STASHED" -eq 1 ]; then
+  git stash pop -q || {
+    echo "pre-commit: gate ran but worktree restore FAILED —" \
+         "your unstaged changes are in 'git stash list'; commit REFUSED" >&2
+    exit 1
+  }
+fi
+
+if [ "$GATE_EXIT" -ne 0 ]; then
+  echo "pre-commit: regression gate FAILED (exit $GATE_EXIT) — commit refused" >&2
+  exit 1
+fi
+echo "pre-commit: regression gate PASS — commit allowed"

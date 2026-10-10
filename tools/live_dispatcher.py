@@ -23,7 +23,9 @@ Gate-4 blocks (affordability, fail-closed):
     -> blocked
 
 Egress is opt-in only: without --confirm-egress no network call is emitted at
-all (dry-run mode; callers supply token counts via --expected-*-tokens).
+all (dry-run mode; callers supply token counts via --expected-*-tokens). With
+--live the real Anthropic adapter (tools/dispatch_adapter.py) is wired as the
+dispatch_fn — still gated on --confirm-egress; --live alone never sends.
 """
 from __future__ import annotations
 
@@ -239,11 +241,25 @@ def main(argv: Optional[List[str]] = None) -> int:
                     help="dry-run mode: output tokens the dispatch would use")
     ap.add_argument("--confirm-egress", action="store_true",
                     help="permit a real network dispatch (Phase 4 owner authorization required)")
+    ap.add_argument("--live", action="store_true",
+                    help="wire the real Anthropic adapter as dispatch_fn (requires .env key and --confirm-egress)")
     ap.add_argument("--ledger", default=str(LEDGER_DEFAULT))
     args = ap.parse_args(argv)
 
     prices = load_prices(PRICES_PATH)
-    d = LiveDispatcher(prices, Path(args.ledger), confirm_egress=args.confirm_egress)
+
+    dispatch_fn = None
+    if args.live:
+        from dispatch_adapter import build_dispatch_fn, DispatchRefused
+        try:
+            dispatch_fn = build_dispatch_fn()  # refuses without .env key or on non-approved endpoint
+        except DispatchRefused as e:
+            print(json.dumps({"decision": "dispatch-refused", "reason": str(e)}), file=sys.stderr)
+            return 2
+
+    d = LiveDispatcher(prices, Path(args.ledger), confirm_egress=args.confirm_egress,
+                       dispatch_fn=dispatch_fn) if args.live or args.confirm_egress else \
+        LiveDispatcher(prices, Path(args.ledger), confirm_egress=False)
     e = d.attempt(args.task_id, args.profile, args.request,
                   work_bound=args.work_bound, review_bound=args.review_bound,
                   expected_in=args.expected_in_tokens, expected_out=args.expected_out_tokens)

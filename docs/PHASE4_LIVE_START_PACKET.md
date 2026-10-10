@@ -9,9 +9,12 @@
 
 ## 1. `prices-2` rate sheet — verified 2026-10-10 against the primary source
 
-**Source of record: https://docs.claude.com/en/docs/about-claude/pricing** (HTTP 200, full page
-text extracted and preserved in authoring session this day; re-verify against the live page at
-ratification — pricing pages can change, which is exactly what the S15b revision rule detects).
+**Source of record: https://docs.claude.com/en/docs/about-claude/pricing**
+((re-verified 2026-10-10, *second pass* this same day: HTTP 302 → 200 landing at
+https://platform.claude.com/docs/en/about-claude/pricing; page text re-read and the Sonnet 5.5
+`$2 / $10 MTok` and Haiku 5.5 `$0.10 / $0.50 MTok (≤100K)` rows again confirmed **verbatim**;
+rate values unchanged from the first-pass read). Re-verify again against the live page at
+ratification — pricing pages can change, which is exactly what the S15b revision rule detects.)
 
 | `profile_id` | Model | `input_rate` | `output_rate` | `units` | `currency` | `uncertainty_class` | Verification |
 | --- | --- | --- | --- | --- | --- | --- | --- |
@@ -82,9 +85,11 @@ amends, then commits. Signing this commit **is** the §10 row 4 owner action.
 - [~] Trial window / deadline:       **90 days from the row-4 approval commit date** (proposed
       default, matching the qualification-record expiry in §2; owner may shorten but SHOULD NOT
       extend past 90 days without a fresh qualification review per plan §5 freshness rule).
-- [~] Verified prices-2 as read from: author verified 2026-10-10 against
-      docs.claude.com/en/docs/about-claude/pricing (HTTP 200, full page text extracted and row
-      values confirmed verbatim). Owner stamps initials/date here as the second-eye check.
+- [~] Verified prices-2 as read from: author verified 2026-10-10 (two passes, same day — second
+      pass confirmed HTTP 302→200 at the new docs URL `platform.claude.com/docs/en/about-claude/
+      pricing`) against docs.claude.com/en/docs/about-claude/pricing; full page text extracted and
+      row values confirmed verbatim both times. Owner stamps initials/date here as the third-eye
+      check.
 ```
 
 **Legend:** `[x]` = already ratified elsewhere; `[~]` = pre-filled by this packet, owner confirms

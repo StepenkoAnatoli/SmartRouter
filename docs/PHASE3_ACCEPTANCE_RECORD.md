@@ -52,7 +52,7 @@ Additional coverage this pass (outside the originally reviewed delta, in the sam
 | Role | Name | Date | Effect |
 | --- | --- | --- | --- |
 | Designated reviewer (delegated-to-agency, per P02_REVIEW_RECORD.md §1 caveat, unchanged) | Buffy (Freebuff agent session) | 2026-10-10 | Review substance complete; all [RECHECK] items re-derived fresh; this acceptance record filed. |
-| Owner acknowledgement — Phase 3 document gate closes at `81edfa7` | `"StepenkoAnatoli"` | _ | **Required**: one commit or PR-comment acknowledgment on this record closes the Phase 3 document gate per the brief §4 step 2. Without it, this record remains an acceptance-ready artifact, not a closed gate. |
+| Owner acknowledgement — Phase 3 document gate **CLOSED at `81edfa7`** | **"StepenkoAnatoli"** | **2026-10-10** | Owner confirmation issued 2026-10-10 in the tool-assisted session (owner-directed, per ask_questions answer this day). This line is the brief §4 step-2 acknowledgement: the Phase 3 document gate is hereby **closed**, and R-D1 converts from "blocking" to "closed under the owner's recorded deviation" per §3. |
 
 ## 5. Untested / not claimed (unchanged scope)
 

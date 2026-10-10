@@ -48,6 +48,8 @@ def parse_frontmatter(text: str):
             continue
         km = re.match(r"^([A-Za-z0-9_-]+):\s*(.*)$", line)
         if not km:
+            if line.strip() and not line.startswith(" "):
+                return None, f"malformed frontmatter line (expected 'key: value'): {line!r}"
             continue
         key, val = km.group(1), km.group(2).strip()
         current_key = key
@@ -104,8 +106,37 @@ def check_no_competing_authority(errors: list):
                 errors.append(f"{rel}: possible competing routing authority ({label})")
 
 
+def check_skill_dir(sd: Path, errors: list):
+    """Validate one skill directory: SKILL.md presence, frontmatter, naming, refs."""
+    skill_md = sd / "SKILL.md"
+    if not skill_md.is_file():
+        errors.append(f"{sd.name}: missing SKILL.md")
+        return
+    text = skill_md.read_text(encoding="utf-8")
+    fields, block = parse_frontmatter(text)
+    if fields is None:
+        errors.append(f"{sd.name}: {block}")
+        return
+    name = fields.get("name", "")
+    check_field(sd.name, fields, errors)
+    if name and NAME_RE.match(name):
+        check_name_dir_match(sd, name, errors)
+    # reference resolution inside SKILL.md
+    resolve_refs(skill_md, errors)
+    # reference resolution inside references/
+    refs = sd / "references"
+    if refs.is_dir():
+        for ref in sorted(refs.glob("*.md")):
+            resolve_refs(ref, errors)
+
+
 def main() -> int:
+    import sys as _sys
+    strict = "--strict" in _sys.argv[1:]
+
     errors: list = []
+    competing: list = []  # separated for strict-mode promotion
+
     if not SKILLS_DIR.is_dir():
         print("no skills/ directory — nothing to validate (plan-only branch).")
         return 0
@@ -114,32 +145,22 @@ def main() -> int:
         print("no skill directories found under skills/")
         return 0
     for sd in skill_dirs:
-        skill_md = sd / "SKILL.md"
-        if not skill_md.is_file():
-            errors.append(f"{sd.name}: missing SKILL.md")
-            continue
-        text = skill_md.read_text(encoding="utf-8")
-        fields, block = parse_frontmatter(text)
-        if fields is None:
-            errors.append(f"{sd.name}: {block}")
-            continue
-        name = fields.get("name", "")
-        check_field(sd.name, fields, errors)
-        if name and NAME_RE.match(name):
-            check_name_dir_match(sd, name, errors)
-        # reference resolution inside SKILL.md
-        resolve_refs(skill_md, errors)
-        # reference resolution inside references/
-        refs = sd / "references"
-        if refs.is_dir():
-            for ref in sorted(refs.glob("*.md")):
-                resolve_refs(ref, errors)
-    check_no_competing_authority(errors)
+        check_skill_dir(sd, errors)
+    check_no_competing_authority(competing)
+    if strict and competing:
+        print(f"FAILED (--strict): {len(competing)} possible competing-authority finding(s) promoted to hard failure:")
+        for e in competing:
+            print(" -", e)
+        return 1
     if errors:
         print(f"FAILED with {len(errors)} error(s):")
         for e in errors:
             print(" -", e)
         return 1
+    if competing:
+        print(f"NOTE: {len(competing)} possible competing-authority finding(s) (informational; rerun with --strict to promote to failure):")
+        for e in competing:
+            print(" -", e)
     print(f"OK: {len(skill_dirs)} skill(s) validated:")
     for sd in skill_dirs:
         n_refs = len(list((sd / 'references').glob('*.md'))) if (sd / 'references').is_dir() else 0

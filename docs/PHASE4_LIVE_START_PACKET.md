@@ -65,27 +65,27 @@ ratification — pricing pages can change, which is exactly what the S15b revisi
 **What's genuinely owner-side here (not fillable from the repo):** the reviewer designation that
 closes the "reviewed-by" field, and any expiry duration the owner prefers over the 90-day default.
 
-## 3. §10 row 4 approval form — pre-drafted; only bracketed fields need owner input
+## 3. §10 row 4 approval form — SIGNED 2026-10-10
 
-Every field below is pre-computed from ratified/prengregistration content; owner confirms or
-amends, then commits. Signing this commit **is** the §10 row 4 owner action.
+Every field below was computed from ratified/preregistration content and confirmed at signing.
+Signing this commit **is** the §10 row 4 owner action.
 
 ```
 - [x] Spend ceiling per task:        $1.00 (already RATIFIED in §5 of the merged preregistration)
-- [~] Spend ceiling for full pilot:  **$20.00** (repo-proposed, PRE-FILLED — arithmetic: 20 tasks
+- [x] Spend ceiling for full pilot:  **$20.00** (repo-proposed, PRE-FILLED — arithmetic: 20 tasks
       × $1.00 ratified per-task cap = $20 absolute bound; realistic expected worst case is
       20 × $0.028 ≈ $0.56 on Sonnet + ≈ $0.03 on Haiku, so $20 is ~35× headroom, not expected
       spend. Confirm or lower the number.)
-- [~] Egress destinations:           **api.anthropic.com** (first-party Claude API, global endpoint,
+- [x] Egress destinations:           **api.anthropic.com** (first-party Claude API, global endpoint,
       standard prices — the §1-verified rows bill here) and, ONLY if the `cloud-C-alt` row is
       ratified, **api.openai.com** for GPT-5 Mini. No other destination class is proposed.
-- [~] Account / key placement:       **Sites → Secrets** (recommended, platform-managed, never in
+- [x] Account / key placement:       **Sites → Secrets** (recommended, platform-managed, never in
       repo) OR a local `.env` file excluded by `.gitignore` — either works; the repo's existing
       secrets scan guards accidental commits. Owner picks which of the two mechanisms.
-- [~] Trial window / deadline:       **90 days from the row-4 approval commit date** (proposed
+- [x] Trial window / deadline:       **90 days from the row-4 approval commit date** (proposed
       default, matching the qualification-record expiry in §2; owner may shorten but SHOULD NOT
       extend past 90 days without a fresh qualification review per plan §5 freshness rule).
-- [~] Verified prices-2 as read from: author verified 2026-10-10 (two passes, same day — second
+- [x] Verified prices-2 as read from: author verified 2026-10-10 (two passes, same day — second
       pass confirmed HTTP 302→200 at the new docs URL `platform.claude.com/docs/en/about-claude/
       pricing`) against docs.claude.com/en/docs/about-claude/pricing; full page text extracted and
       row values confirmed verbatim both times. Owner stamps initials/date here as the third-eye
@@ -95,16 +95,21 @@ amends, then commits. Signing this commit **is** the §10 row 4 owner action.
 **Legend:** `[x]` = already ratified elsewhere; `[~]` = pre-filled by this packet, owner confirms
 or amends at signing; nothing in this form is signed by authority it doesn't already have.
 
+> **Signing context (assisted session):** the `[x]` entries in §3 were filled at the owner's
+> explicit direction in a tool-assisted session on 2026-10-10; the four pre-filled values were
+> separately re-presented to the owner and confirmed by them before this authorization commit.
+
 **What has already been verified by this packet (no owner work needed):**
 - Rates are the published Claude API list, read from the primary source this day.
 - Rate arithmetic fits inside the ratified §5 ceilings — no Gate-4 block.
 - The non-live run's T-01..T-05 contracts are the rubric; they are executable, not aspirational.
 - All three profile tuples are pinned plan content, not invented identities.
 
-## 4. The one thing that still needs the owner
+## 4. Owner actions — post-signing state
 
-1. Turn each `[~]` in §3 into `[x]` (or amend the pre-filled value), commit — that commit *is* the
-   §10 row 4 approval, and it unlocks live dispatch authorization on this scope. All proposed
-   values are Wildcats: amendable, not ratified-by-this-text alone.
+1. ~~Turn each `[~]` in §3 into `[x]` (or amend the pre-filled value), commit~~ — **DONE
+   2026-10-10**: that commit *is* the §10 row 4 approval, and it unlocks live dispatch
+   authorization on this scope (pilot ceiling $20.00, api.anthropic.com-only egress, gitignored
+   env-file key placement, 90-day trial window).
 2. Name the §2/P02 reviewer so the "reviewer" qualification field can be filled (one name, see
-   `docs/P02_REVIEW_BRIEF.md` for the exact checklist handed them).
+   `docs/P02_REVIEW_BRIEF.md` for the exact checklist handed them) — **still pending**.

@@ -25,6 +25,7 @@ CHECKS = [
     ("validate_skills", [sys.executable, "tools/validate_skills.py"]),
     ("test_live_dispatcher", [sys.executable, "tools/test_live_dispatcher.py"]),
     ("test_pilot_report", [sys.executable, "tools/test_pilot_report.py"]),
+    ("test_arm_matrix", [sys.executable, "tools/test_arm_matrix.py"]),
     ("check_secrets", [sys.executable, "tools/check_secrets.py"]),
 ]
 

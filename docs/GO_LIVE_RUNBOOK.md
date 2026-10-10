@@ -9,8 +9,8 @@ checkpoint requiring the owner's hands (key entry, go/no-go).
 ## 0. Preconditions (verify before anything)
 
 - [ ] `git rev-parse HEAD == origin/main` — you are on the pushed, signed tree.
-- [ ] `python tools/run_regression.py` — all four checks PASS (validator, dispatcher suite,
-      pilot-report suite, secrets scan), exit 0.
+- [ ] `python tools/run_regression.py` — all six checks PASS (validator, dispatcher suite,
+      pilot-report suite, arm-matrix suite, secrets scan), exit 0.
 - [ ] `python tools/check_secrets.py` — clean, 0 hits.
 - [ ] Prices-2 revision intact: `python -c "import json;print(json.load(open('tools/prices-2.json'))['revision'])"` prints `prices-2`.
 
@@ -48,13 +48,23 @@ python tools/live_dispatcher.py --profile cloud-XYZ --task-id dryrun-2 \
 
 ## 3. Live dispatch (owner-gated)
 
-Live mode requires BOTH: (a) `--confirm-egress`, and (b) a wired `dispatch_fn` that targets
-`https://api.anthropic.com` (the only allowed endpoint) and returns the actual
-`(input_tokens, output_tokens)` from usage data. The dispatcher refuses live mode without a wired
-function — nothing in this repo improvises an HTTP call.
+Live mode requires BOTH: (a) `--confirm-egress`, and (b) `--live` to wire the real Anthropic
+adapter (tools/dispatch_adapter.py) as the `dispatch_fn`. The adapter targets ONLY the approved
+`https://api.anthropic.com` endpoint, loads the key from the gitignored `.env`, and returns the
+model's actual `(input_tokens, output_tokens)` from the response usage block — the dispatcher
+prices spend from those figures. `--live` alone (without `--confirm-egress`) sends nothing.
 
-**Owner checkpoint before step 3**: confirm `.env` key is loaded in the session environment and
-the go/no-go is GO.
+**Owner checkpoint before step 3**: confirm `.env` key is loaded and the go/no-go is GO.
+
+**Exact CLI invocation for pilot start (one live send, smallest profile scope):**
+
+```bash
+python tools/live_dispatcher.py   --live --confirm-egress   --profile cloud-C   --task-id live-001 --request "<task prompt>"   --work-bound 0.01 --review-bound 0.01   --ledger tools/pilot_ledger.jsonl
+```
+
+Expected: exit 0 and a ledger line with `"decision": "dispatched"` and a nonzero `cost_usd`.
+Refusal cases (exit 2, pre-flight, no HTTP call): missing `.env` key; profile with no approved
+Anthropic mapping (`cloud-C-alt` is refused — its provider is NOT approved for this pilot).
 
 - First live send: exactly one task, smallest profile scope (`cloud-C`), work+review bounds set to
   the same values used in the preregistration sample.

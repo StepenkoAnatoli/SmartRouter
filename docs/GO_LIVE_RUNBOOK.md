@@ -1,32 +1,45 @@
 # Go-live runbook — first live dispatch session (post-row-4)
 
 Owner authorization is in force: [PHASE4_LIVE_START_PACKET.md](PHASE4_LIVE_START_PACKET.md) §3
-SIGNED 2026-10-10 — $1.00/task, $20.00/pilot, 4 attempts + 1 same-profile repair per task,
-api.anthropic.com ONLY, 90-day window from `f6fda9e`. This runbook is the exact mechanical
-sequence for the first live session. Every step is either executable here or an explicit
-checkpoint requiring the owner's hands (key entry, go/no-go).
+SIGNED 2026-10-10 — **$1.00/task, $20.00/pilot, 4 attempts + 1 same-profile repair,
+api.anthropic.com ONLY, 90-day window**. The real Anthropic adapter is wired
+(`tools/dispatch_adapter.py`, via `live_dispatcher.py --live`). This is the exact mechanical
+sequence for the first live session. Every step is executable as written, except the two places
+only the owner's hands can act (key pasting, the GO decision) — both marked **OWNER**.
 
-## 0. Preconditions (verify before anything)
+---
 
-- [ ] `git rev-parse HEAD == origin/main` — you are on the pushed, signed tree.
-- [ ] `python tools/run_regression.py` — all six checks PASS (validator, dispatcher suite,
-      pilot-report suite, arm-matrix suite, secrets scan), exit 0.
-- [ ] `python tools/check_secrets.py` — clean, 0 hits.
-- [ ] Prices-2 revision intact: `python -c "import json;print(json.load(open('tools/prices-2.json'))['revision'])"` prints `prices-2`.
+## 0. Preconditions — verify before anything (≈1 min)
 
-**Stop-condition**: any failed precondition blocks the session. No exceptions.
+Run in order; each must satisfy before continuing:
 
-## 1. Key placement (.env, never committed)
+```bash
+[ "$(git rev-parse HEAD)" = "$(git ls-remote origin main | cut -f1)" ] && echo parity-OK      # on the pushed tree
+python tools/run_regression.py                                  # 8 checks, exit 0
+python tools/check_secrets.py                                   # clean, 0 hits
+python tools/live_dispatcher.py --live \                        # adapter present:
+  --profile cloud-C --task-id preflight --request x \           # refusal expected WITHOUT .env
+  --work-bound 0.01 --review-bound 0.01 --ledger /tmp/preflight.jsonl; echo "expect exit 2"
+```
+
+**Stop-condition**: any unexpected result blocks the session; fix and re-run before step 1.
+The expected exit-2 above proves the fail-closed path: no key ⇒ no HTTP call.
+
+## 1. Key placement — `.env`, never committed *(OWNER: key pasting)*
 
 1. `cp .env.example .env`
-2. Owner pastes the real Anthropic key into `.env` (`ANTHROPIC_API_KEY=sk-ant-…`) **by hand** —
-   the key must never appear in chat, terminals, logs, or any tracked file.
-3. Verify it is ignored: `git check-ignore .env` must exit 0 (ignored).
-4. Verify the guard: `python tools/check_secrets.py` still exits 0 — the scanner reads
-   **tracked** files only and the `.env` is ignored by design; if it ever reports a hit, stop and
-   investigate before proceeding.
+2. **OWNER**: paste the real Anthropic key into `.env` by hand
+   (`ANTHROPIC_API_KEY=sk-ant-…`). The key must never appear in chat, terminals, logs, or any
+   tracked file.
+3. Verify placement ×3:
 
-## 2. Dry-run warm-up (no network, proves the gate pipeline)
+```bash
+git check-ignore .env                                    # exit 0 = ignored ✓
+git ls-files | grep -x '.env'                            # empty = never tracked ✓
+python tools/check_secrets.py                            # still clean ✓
+```
+
+## 2. Dry-run warm-up — no network, proves the pipeline (no OWNER needed)
 
 ```bash
 python tools/live_dispatcher.py \
@@ -34,70 +47,73 @@ python tools/live_dispatcher.py \
   --work-bound 0.01 --review-bound 0.01 \
   --expected-in-tokens 10000 --expected-out-tokens 1000 \
   --ledger /tmp/dryrun_ledger.jsonl
-```
+# expect: {"decision": "dispatched", "cost_usd": 0.0015, ...}, exit 0
 
-Expect: `{"decision": "dispatched", "cost_usd": 0.0015, ...}` and exit 0.
-Also expect a Gate-4 block for an unpriced profile to exit 1:
-
-```bash
 python tools/live_dispatcher.py --profile cloud-XYZ --task-id dryrun-2 \
   --request "x" --work-bound 0.01 --review-bound 0.01 --ledger /tmp/dryrun_ledger.jsonl
+# expect: {"decision": "unknown-profile", ...} Gate-4 fail-closed, exit 1
 ```
 
-**Checkpoint**: the dry-run output above is what the owner checks before consenting to live mode.
+## 3. Live dispatch — both flags required, one send *(OWNER: the GO decision)*
 
-## 3. Live dispatch (owner-gated)
+**OWNER checkpoint**: confirm `.env` holds a real key and you say GO. Nothing sends without
+`--live` (wires the adapter) **and** `--confirm-egress` (explicit consent) together.
 
-Live mode requires BOTH: (a) `--confirm-egress`, and (b) `--live` to wire the real Anthropic
-adapter (tools/dispatch_adapter.py) as the `dispatch_fn`. The adapter targets ONLY the approved
-`https://api.anthropic.com` endpoint, loads the key from the gitignored `.env`, and returns the
-model's actual `(input_tokens, output_tokens)` from the response usage block — the dispatcher
-prices spend from those figures. `--live` alone (without `--confirm-egress`) sends nothing.
-
-**Owner checkpoint before step 3**: confirm `.env` key is loaded and the go/no-go is GO.
-
-**Exact CLI invocation for pilot start (one live send, smallest profile scope):**
+**Exact pilot-start invocation** (one live send, smallest profile scope, `cloud-C`):
 
 ```bash
-python tools/live_dispatcher.py   --live --confirm-egress   --profile cloud-C   --task-id live-001 --request "<task prompt>"   --work-bound 0.01 --review-bound 0.01   --ledger tools/pilot_ledger.jsonl
+python tools/live_dispatcher.py \
+  --live --confirm-egress \
+  --profile cloud-C \
+  --task-id live-001 --request "<task prompt from the §3.1 contract>" \
+  --work-bound 0.01 --review-bound 0.01 \
+  --ledger tools/pilot_ledger.jsonl
 ```
 
-Expected: exit 0 and a ledger line with `"decision": "dispatched"` and a nonzero `cost_usd`.
-Refusal cases (exit 2, pre-flight, no HTTP call): missing `.env` key; profile with no approved
-Anthropic mapping (`cloud-C-alt` is refused — its provider is NOT approved for this pilot).
+Expected: **exit 0**, ledger line `"decision": "dispatched"` with a **nonzero `cost_usd`**
+computed from the adapter's actual usage tokens against the prices-2 rates. Refusal cases
+(exit 2, pre-flight, no HTTP): missing `.env` key; profile with no approved Anthropic mapping
+(`cloud-C-alt` is refused — its provider is NOT approved).
 
-- First live send: exactly one task, smallest profile scope (`cloud-C`), work+review bounds set to
-  the same values used in the preregistration sample.
-- Watch the ledger appear at `tools/pilot_ledger.jsonl` (gitignored — and that's correct; it is
-  generated telemetry, committed only if/when the pilot close report asks for it).
+The ledger lands at `tools/pilot_ledger.jsonl` (gitignored by design; committed only if the
+pilot-close report asks). Keep the output JSON of each send in your session log.
 
-## 4. After each live dispatch — accounting check
+## 4. Ledger verification — after EACH live dispatch
 
 ```bash
-python tools/pilot_report.py --ledger tools/pilot_ledger.jsonl
+python tools/pilot_close.py --ledger tools/pilot_ledger.jsonl           # per-task closures
+python tools/pilot_close.py --ledger tools/pilot_ledger.jsonl --markdown  # report-ready block
+python tools/pilot_report.py --ledger tools/pilot_ledger.jsonl           # accounting status
 ```
 
-- `accounting_status: "intact"` and exit 0 → proceed.
-- `GAPS_FOUND` or exit 1 → stop the session; the §7 accounting rule (drift rule, preregistration
-  §6) says affected observations are excluded and the cause must be understood before restart.
-- Zero-tolerance side-note: any observed unauthorized effect (egress to a non-approved host,
-  credential exposure, privilege escalation) ⇒ decision `reject (stop)` regardless of spend or
-  quality — freeze the ledger (copy it aside, do not edit any line) and stop.
+Pass criteria, in order:
+- `pilot_close` exit 0, `accounting_status: "intact"`, per-task `Caps OK` column OK;
+- `pilot_report` exit 0, spend ≤ **$1.00** per task and ≤ **$20.00** pilot;
+- dispatch count ≤ 4 per task, ≤ 1 same-profile repair, 300 s per task.
+
+Fail actions:
+- exit 1 (`GAPS_FOUND`) → **stop**; per preregistration §6 drift rule, affected observations are
+  excluded and the cause must be understood before restart. Do not edit any ledger line.
+- any observed unauthorized effect (egress to a non-approved host, credential exposure,
+  privilege escalation) ⇒ **zero-tolerance**: copy the ledger aside unchanged, decision is
+  `reject (stop)`, session over.
 
 ## 5. Session close
 
-- [ ] Ledger contains only honest entries — no manual edits; blocks and dispatches both recorded.
-- [ ] `python tools/pilot_report.py` — intact.
-- [ ] `python tools/run_regression.py` — still all PASS after close.
-- [ ] Working tree clean: `git status --porcelain` empty (`.env` ignored, ledger ignored).
-- [ ] Pilot spend from the report is ≤ $20.00 and per task ≤ $1.00 — confirm from the report JSON.
+- [ ] `python tools/pilot_close.py --ledger tools/pilot_ledger.jsonl` — intact, all tasks closed.
+- [ ] `python tools/run_regression.py` — still 8/8 PASS after close.
+- [ ] `git status --porcelain` empty (`.env` ignored, ledger ignored).
+- [ ] Spend from the closure JSON ≤ $20.00 pilot / ≤ $1.00 task. If you decide to commit the
+      ledger as pilot-close evidence for the report, review it first — it is gitignored by
+      default and stays that way unless explicitly `git add -f`ed by you.
 
-## 6. Known boundaries (honest limitations of this runbook)
+## 6. Known boundaries (honest limitations)
 
-- The dispatch_fn wiring lives outside this repo (it does egress with the key); its correctness is
-  verified by the first live dispatch's own usage figures being what pilot_report recomputes.
-- Wall-clock deadline enforcement is per dispatcher instance — for tasks spanning process restarts,
-  the caller must persist per-task start times; the pilot's non-live harness (T-01..T-05) models
-  short tasks where this is not an issue.
-- `--strict` promotion logic, cache-credit accounting, and consumer-owned gates (Phase 5/6/7) are
-  out of scope here, unchanged from the packet.
+- The adapter's HTTP path (`_http_transport`) is stdlib `urllib` and was exercised only via
+  mocked-transport tests — the first real call IS the moment this runbook reaches step 3. Its
+  correctness is verified by the dispatch's own usage figures matching what `pilot_report`
+  recomputes (step 4's intact check).
+- Wall-clock deadline enforcement is per dispatcher process; a task spanning process restarts
+  needs per-task state persistence (not implemented — fine for short §3.1 tasks).
+- Cache-credit accounting, `--strict`-non-empty promotion, and consumer-owned phases (5–7) are
+  out of scope, unchanged from the live-start packet.

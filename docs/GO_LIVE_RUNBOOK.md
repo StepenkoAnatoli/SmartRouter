@@ -111,7 +111,12 @@ Fail actions:
 ## 5. Session close
 
 - [ ] `python tools/pilot_close.py --ledger tools/pilot_ledger.jsonl` — intact, all tasks closed.
-- [ ] `python tools/run_regression.py` — still 8/8 PASS after close.
+- [ ] `python tools/run_regression.py` — now **11 checks**, must all PASS after close.
+      Check #11, `live_fill_sheet_integrity`, audits the live-fill sheet (if a session
+      sheet exists): any dishonest state — a cell marked `filled` with unmeasured slots,
+      or filled with `accounting_intact=false` — FAILS the gate, blocking every commit
+      until fixed. The session cannot close with an unhonest sheet, and neither can any
+      commit land on it. No live session → no sheet → check passes trivially.
 - [ ] `git status --porcelain` empty (`.env` ignored, ledger ignored).
 - [ ] Spend from the closure JSON ≤ $20.00 pilot / ≤ $1.00 task. If you decide to commit the
       ledger as pilot-close evidence for the report, review it first — it is gitignored by

@@ -49,11 +49,18 @@ def check_integrity(sheet: dict) -> list:
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Tally live-fill sheet vs §8 plan")
     ap.add_argument("--sheet", default=str(Path(__file__).resolve().parent / "live_fill_sheet.json"))
+    ap.add_argument("--mode", choices=("full", "gate"), default="full",
+                    help="full: session-close tally (missing sheet = exit 2). "
+                         "gate: regression-gate mode — missing sheet passes (no session "
+                         "opened); a sheet that exists MUST be honest or the gate fails.")
     args = ap.parse_args(argv)
 
     p = Path(args.sheet)
     if not p.is_file():
-        print(f"live_fill_tally: sheet missing at {p} — run gen_live_fill_sheet.py", file=SystemExit and __import__("sys").stderr)
+        if getattr(args, "mode", "full") == "gate":
+            print("live_fill_tally(gate): no sheet present — no live session state to audit; PASS")
+            return 0
+        print(f"live_fill_tally: sheet missing at {p} — run gen_live_fill_sheet.py", file=__import__("sys").stderr)
         return 2
     try:
         sheet = json.loads(p.read_text(encoding="utf-8"))

@@ -1,2 +1,18 @@
-__pycache__/
+# --- secrets / credentials (row-4 decision: keys live in a local .env, never in the repo) ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+credentials*.json
+secrets*.json
+
+# --- pilot telemetry / generated artifacts ---
+tools/pilot_ledger.jsonl
+tools/*.ledger.jsonl
+**/__pycache__/
 *.pyc
+
+# --- OS noise ---
+Thumbs.db
+.DS_Store

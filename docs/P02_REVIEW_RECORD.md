@@ -92,3 +92,37 @@ to speed a designated reviewer's work and make the eventual sign-off cheap, accu
 - `--strict` promotion path against a *non-empty* competing-authority finding (clean tree → no
   finding to promote; logic inspected, not executed non-empty).
 - Plan-§5 plan-governance steps on Phases 5–7 (Research-Kit/Moonzila), consumer-owned by design.
+
+## 6. Designated-reviewer walkthrough (re-derive step — countersign format)
+
+> This section is a *walkthrough aid* for the named-reviewer step, not a substitute for it. It
+> re-derives the audit's evidence inline so the actual reviewer can check the derivation rather
+> than trust the audit. Still **not** an independent acceptance: the audit author re-derives these
+> items; a designated non-author must countersign §6.1 to move from audit-record to acceptance-record.
+
+### 6.1 Items the designated reviewer must re-derive (already re-derived here for their convenience)
+
+| Item | Re-derivation command (paste into a fresh terminal at repo root) | Expected observed result at `2f4b141` | Status this pass |
+| --- | --- | --- | --- |
+| Skill tree bit-identical from baseline | `git diff --name-only 6d20b04..2f4b141 -- skills/ \| wc -l` | `0` | ✓ re-derived |
+| Suite integrity | `python tests/smart_router_decisions.py` | exit 0; "79/79 assertions passed"; "52/52 distinct fixture IDs" | ✓ re-derived |
+| Validator both modes | `python tools/validate_skills.py` then `python tools/validate_skills.py --strict` | exit 0, both | ✓ re-derived |
+| Smoke pass | `python fixture_checks.py` | exit 0; "All arithmetic fixtures verified." | ✓ re-derived |
+| Seed derivation | rerun the §3.2 SHA-256 method against all six `(label, hex, decimal)` rows | 6/6 exact match | ✓ re-derived |
+| DEVELOPMENT_PLAN delta | `git diff 6d20b04..2f4b141 -- docs/DEVELOPMENT_PLAN.md` | 2 lines, `recieve`→`receive` only, S01/V02 fixture rows | ✓ re-derived |
+| Secrets scan | grep the 9 delta files for `ghp_*` / `github_pat_*` patterns | 0 hits | ✓ re-derived |
+| Threshold stability | grep §4/§5 numeric values in the `6d20b04` vs `2f4b141` preregistration | same values both sides (90%, 5 pp, 10%, ±5%, ±5 pp, >5%, 95%, 4, $1.00, 5 min, 20/arm, 50/50, 2 repeats) | ✓ re-derived |
+| R-D1 gap state | confirm no independent-reviewer acceptance record exists yet | gap open; merge was owner-directed | ✓ re-derived |
+
+### 6.2 What an independent acceptance record must additionally do (owner action)
+
+Designate the reviewer (one name, committed). Counter-sign this walkthrough by editing a copy of
+§6.1's Status column from "re-derived" to "independently re-derived" in `docs/P02_REVIEW_RECORD.md`,
+commit, and add a short attest line with signature identity. That one countersign commit is what
+converts this walkthrough into the P01/P02 acceptance material the plan actually calls for, and
+Phase 3 exit then follows via `docs/PHASE4_LIVE_START_PACKET.md` §3.
+
+### 6.3 Explicit non-closure clause
+
+**This record still does not close the P02 gate.** The countersign step in §6.2 does, and only the
+owner (with a named non-author reviewer) can execute it.

@@ -63,3 +63,30 @@ and advisory-only sidecar output with no dispatch claims (T-05).
 - Merge into `main` for PRs #8/#9 was owner-directed **without** the plan P02 independent
   reviewer step; recorded in `docs/PROJECT_COMPLETION.md` rather than silently claimed as a
   reviewed approval.
+
+## 6. Arm-coverage execution matrix (§3.1 × A/B/C/D)
+
+> Scope of this matrix: mechanical-derivation record, not a live-execution claim. Cells marked
+> **G** were exercised by running the task through the decision suite's real gate model
+> (`choose_route` on plan §10 profiles) with the task's actual economic shape — the same model the
+> suite's 79 assertions verify. Cells marked **D** (definitional) are arm A/B/C: by preregistration
+> §1 these arms dispatch straight to a profile without routing, so their "route decision" is a
+> definition of the arm, not a computed result. They are recorded so every task has a documented
+> path in every arm; where the arm would execute the task identically to what the non-live run
+> already did, that is claimed; where it is a plan-only shape, the honesty note below applies.
+
+| Task | A (strong direct / cloud-S) | B (econ direct / cloud-C) | C (fixed rule) | D (SmartRouter flow) |
+| --- | --- | --- | --- | --- |
+| T-01 docs typo sweep | D: defined arm; content-wise same job as executed non-live contract | D: same, weaker model | D: pick cheapest eligible = **C**, content-wise same job | **G tested:** route=`direct`, profile=`local-L`, 5 gates pass |
+| T-02 validate_skills helper | D: same contract (extract helper); stronger model unneeded | D: same contract | D: picks C | **G tested:** route=`direct`, profile=`local-L` |
+| T-03 `--strict` flag | D: same contract | D: same contract | D: picks C | **G tested:** route=`direct`, profile=`local-L` |
+| T-04 frontmatter hardening | D: same contract | D: same contract | D: picks C | **G tested:** route=`direct`, profile=`local-L` |
+| T-05 sidecar summary helper | D: (if viewed as advanced-review task) same contract via cloud-S | D: same as simpler helper | D: picks C | **G tested (basic):** route=`direct`, profile=`local-L`. **G tested (advanced-review interpretation):** route=`direct`, profile=`cloud-S` — gates 2 initially flag S,C,L ordering artifact, resolved by ordering that puts S first; no 5-gate residual failure on S |
+
+**Honesty note (per §5 of this report):** only the **D** column is evidence the *routing policy*
+would take the recorded action under the preregistered gates. The A/B/C columns show what a
+non-router arm would do *by definition* — they do not claim that arm actually executed the task;
+only the D-arm T-01..T-05 contracts were physically run (in [§2](#2-per-task-evidence-ledger-31-contracts))
+and the gate-model derivations were rerun live for this matrix. Costs/latency/effort per cell are
+**not** measured for A/B/C in this report — those need a live Phase 4 run per §10 row 4, which stays
+PENDING there. This is a **coverage ledger**, not a comparative measurement.

@@ -10,13 +10,13 @@ revision plus owner acknowledgement — which remains outstanding.
 
 | Path | Role |
 | --- | --- |
-| [skills/smart-router/SKILL.md](SKILL.md) | Canonical routing authority: ordered gates, output contract |
-| [skills/smart-router/references/gates.md](references/gates.md) | Normative gate contract |
-| [skills/smart-router/references/brief-and-result.md](references/brief-and-result.md) | Compact brief/result workflow |
-| [skills/smart-router-review/SKILL.md](../smart-router-review/SKILL.md) | Blocker-review procedure; never selects |
-| [skills/smart-router-review/references/blocked-review.md](../smart-router-review/references/blocked-review.md) | Blocker checklist/evidence record |
-| [skills/smart-router-eval-prep/SKILL.md](../smart-router-eval-prep/SKILL.md) | Preregistration preparation; never authorizes trials |
-| [skills/smart-router-eval-prep/references/preregistration.md](../smart-router-eval-prep/references/preregistration.md) | Preregistration checklist |
+| [skills/smart-router/SKILL.md](../skills/smart-router/SKILL.md) | Canonical routing authority: ordered gates, output contract |
+| [skills/smart-router/references/gates.md](../skills/smart-router/references/gates.md) | Normative gate contract |
+| [skills/smart-router/references/brief-and-result.md](../skills/smart-router/references/brief-and-result.md) | Compact brief/result workflow |
+| [skills/smart-router-review/SKILL.md](../skills/smart-router-review/SKILL.md) | Blocker-review procedure; never selects |
+| [skills/smart-router-review/references/blocked-review.md](../skills/smart-router-review/references/blocked-review.md) | Blocker checklist/evidence record |
+| [skills/smart-router-eval-prep/SKILL.md](../skills/smart-router-eval-prep/SKILL.md) | Preregistration preparation; never authorizes trials |
+| [skills/smart-router-eval-prep/references/preregistration.md](../skills/smart-router-eval-prep/references/preregistration.md) | Preregistration checklist |
 | [tools/validate_skills.py](../tools/validate_skills.py) | Packaging validator |
 | [README.md](../README.md) | Canonical-authority pointer; historical docs preserved |
 

@@ -44,7 +44,7 @@ Additional coverage this pass (outside the originally reviewed delta, in the sam
 
 | ID | Earlier disposition | This pass |
 | --- | --- | --- |
-| R-D1 | unresolved-by-record-design | **Cleared-by-acceptance-mechanics (see §4)** — the review substance is complete (all 9 items `\u2713` above), the R-D1 evidence trail is cited in §1, and the owner's recorded deviation in PROJECT_COMPLETION.md §3 is confirmed accurate by this pass. R-D1 converts from "blocking" to "closed under the owner's recorded deviation" when the owner signs §4 of this record; the record itself does not claim more than that. |
+| R-D1 | unresolved-by-record-design | **Cleared-by-acceptance-mechanics (see §4)** — the review substance is complete (all 9 items ✓ above), the R-D1 evidence trail is cited in §1, and the owner's recorded deviation in PROJECT_COMPLETION.md §3 is confirmed accurate by this pass. R-D1 converts from "blocking" to "closed under the owner's recorded deviation" when the owner signs §4 of this record; the record itself does not claim more than that. |
 | R-A2/R-B1/R-C1..C3/R-E1/R-F1 | nonblocking (observed) | All confirmed unchanged — no new findings this pass; the current tree adds tooling and authorization artefacts that do not touch the reviewed 9-file delta (verified in RECHECK #1–#2 matching). |
 
 ## 4. Acceptance + owner acknowledgement (per P02 brief §4 mechanics)

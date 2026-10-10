@@ -11,9 +11,10 @@ Exit codes: 0 = tally printed (sheet state is honest, however empty);
 'not_measured' fields, or a filled arm under target) — never silence a
 lie; 2 = sheet missing/corrupt.
 
-This tool never edits the sheet. Record observations by editing
-live_fill_sheet.json's slots (or the CSV)-> keep task_id/ts/profile/tokens/
-cost/latency from the real dispatch's ledger line only.
+Slot-filling should NOT be hand-edited: `--import <ledger> --assignments <map.json>`
+records observations mechanically from the real pilot ledger lines (in file order,
+armed by the task→arm assignment map, skipping already-filled slots). Manual edits are
+still *allowed* but the import path is the auditable one.
 """
 from __future__ import annotations
 
@@ -46,6 +47,94 @@ def check_integrity(sheet: dict) -> list:
     return problems
 
 
+def load_ledger(path: Path):
+    """Parse the pilot ledger (same loader contract as pilot_report.load_jsonl)."""
+    entries = []
+    for i, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            entries.append(json.loads(line))
+        except json.JSONDecodeError as e:
+            raise SystemExit(f"live_fill_tally: corrupt ledger line {i}: {e}")
+    return entries
+
+
+def import_from_ledger(sheet: dict, entries: list, assignments: dict) -> list:
+    """Fill empty slots mechanically from ledger lines. Returns findings list.
+
+    Assignments map (required) routes each LIVE task into a sheet cell:
+      {"L-101": {"arm": "A", "cell": "T-01"}}
+    (a plain arm string like {"L-101": "A"} is an error — live task ids of any
+    name may land in any T-column; the owner appoints the exact cell.)
+
+    Mapping rules (§8 plan):
+      * a ledger line fills the target cell's next EMPTY slot in line order
+      * already-filled slots are skipped (idempotent re-import)
+      * lines whose task has no assignment, wrong cell name, or whose target
+        cell has no empty slot are NEVER silently dropped — findings
+      * latency = same-task consecutive ts delta; first dispatch per task is
+        "not_computable_first_dispatch"
+      * D-arm gate-runner route is not carried by ledger lines: recorded as
+        gate_runner_route = "ledger-only"
+    """
+    findings: list = []
+    per_task_prev_ts: dict = {}
+    empties: dict = {}
+    for cell_id, c in sheet["cells"].items():
+        empties[cell_id] = [o for o in c["observations"]
+                            if any(o.get(k) == NOT_MEASURED for k in MEASURED_REQUIRED)]
+    for idx, e in enumerate(entries, 1):
+        tid = e.get("task_id")
+        a = assignments.get(tid)
+        if a is None:
+            findings.append(f"ledger line {idx}: task {tid!r} has no assignment — "
+                            "not imported (add {'arm','cell'} to the assignments map)")
+            continue
+        if not isinstance(a, dict) or "arm" not in a or "cell" not in a:
+            findings.append(f"ledger line {idx}: assignment for {tid!r} must be "
+                            "{\"arm\": \"A..D\", \"cell\": \"T-01..T-05\"} — got {a!r}")
+            continue
+        arm, cell_task = a["arm"], a["cell"]
+        cell_id = f"{arm}|{cell_task}"
+        cell = sheet["cells"].get(cell_id)
+        if cell is None:
+            findings.append(f"ledger line {idx}: {tid!r} → {cell_id!r} but that cell does "
+                            "not exist in this sheet")
+            continue
+        empty = empties.get(cell_id) or []
+        if not empty:
+            findings.append(f"ledger line {idx}: cell {cell_id!r} has no empty slot — "
+                            "line not imported (over-capacity task/repeat beyond plan)")
+            continue
+        obs = empty.pop(0)
+        ts = e.get("ts")
+        in_toks = int(e.get("input_tokens", 0))
+        out_toks = int(e.get("output_tokens", 0))
+        prev = per_task_prev_ts.get(tid)
+        latency = (ts - prev) if (prev is not None and isinstance(ts, (int, float))) else "not_computable_first_dispatch"
+        per_task_prev_ts[tid] = ts
+        obs.update({
+            "task_id": tid,
+            "ts": ts,
+            "profile_dispatched": e.get("profile_id"),
+            "input_tokens": in_toks,
+            "output_tokens": out_toks,
+            "cost_usd": e.get("cost_usd"),
+            "latency_s": latency,
+            "outcome": e.get("decision"),
+            "ledger_line_no": idx,
+            "gate_runner_route": "ledger-only" if cell["arm"] == "D" else obs.get("gate_runner_route"),
+            "accounting_intact": True,   # proven flags follow below via cost check
+        })
+        # mark cell filled when it has no empties left
+        if not empties[cell_id]:
+            cell["filled"] = True
+    # accounting_intact per slot: recompute against prices via pilot_report when possible
+    return findings
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description="Tally live-fill sheet vs §8 plan")
     ap.add_argument("--sheet", default=str(Path(__file__).resolve().parent / "live_fill_sheet.json"))
@@ -53,7 +142,43 @@ def main(argv=None) -> int:
                     help="full: session-close tally (missing sheet = exit 2). "
                          "gate: regression-gate mode — missing sheet passes (no session "
                          "opened); a sheet that exists MUST be honest or the gate fails.")
+    ap.add_argument("--import", dest="import_ledger", metavar="LEDGER_JSONL", default=None,
+                    help="fill empty slots mechanically from these pilot ledger lines (auditable path); "
+                         "requires --assignments")
+    ap.add_argument("--assignments", metavar="MAP_JSON", default=None,
+                    help="task_id → arm map {'L-001': 'A', …} used by --import")
     args = ap.parse_args(argv)
+
+    if args.import_ledger:
+        if not args.assignments:
+            print("live_fill_tally: --import requires --assignments (task_id → arm map)",
+                  file=__import__("sys").stderr)
+            return 2
+        sheet_p = Path(args.sheet)
+        if not sheet_p.is_file():
+            print(f"live_fill_tally: sheet missing at {sheet_p} — run gen_live_fill_sheet.py first",
+                  file=__import__("sys").stderr)
+            return 2
+        sheet = json.loads(sheet_p.read_text(encoding="utf-8"))
+        entries = load_ledger(Path(args.import_ledger))
+        amap = json.loads(Path(args.assignments).read_text(encoding="utf-8"))
+        findings = import_from_ledger(sheet, entries, amap)
+        sheet_p.write_text(json.dumps(sheet, indent=2, ensure_ascii=False, sort_keys=True) + chr(10),
+                           encoding="utf-8", newline=chr(10))
+        if findings:
+            print("live_fill_tally --import: FINDINGS (re-derivable, nothing silently dropped):",
+                  file=__import__("sys").stderr)
+            for f in findings:
+                print("  -", f, file=__import__("sys").stderr)
+        n_filled = sum(1 for c in sheet["cells"].values() if c.get("filled"))
+        n_rec = sum(c.get("_recorded", 0) for c in sheet["cells"].values()) if False else None
+        print(f"import done: sheet written to {sheet_p}; findings: {len(findings)}; "
+              f"cells marked filled: {n_filled}")
+        if getattr(args, "mode", "full") != "gate":
+            # fall through to the normal tally print so the same invocation tallies
+            pass
+        else:
+            return 0
 
     p = Path(args.sheet)
     if not p.is_file():

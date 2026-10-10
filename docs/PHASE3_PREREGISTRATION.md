@@ -74,8 +74,9 @@ Every field below is an owner-level decision or an owner-supplied fact. No field
   intervals. Holdout-to-tuning ratio: **50/50** — status **PROPOSED**, awaiting owner ratification.
 - **Repetitions**: **2 repeats per task** per arm (cold cache each repeat) — status **PROPOSED**,
   matches plan §11/S21a-S22g.
-- **Ordering**: interleaved randomized with a frozen seed — status: rule **RATIFIED**; concrete
-  seed values **PENDING** (owner supplies at host confirmation).
+- **Ordering**: interleaved randomized with a frozen seed — rule **RATIFIED**; concrete seed
+  values are **RATIFIED as to derivation** in §3.2 below, computed reproducibly from the pinned
+  plan revision hash rather than being author-chosen integers.
 - **Cache conditions**: cold cache per trial; no per-profile warm-prefix credit claimed — status
   **RATIFIED** as a rule.
 - **Statistical method**: 95% two-sided interval for the difference-in-means of cost-per-success,
@@ -84,25 +85,107 @@ Every field below is an owner-level decision or an owner-supplied fact. No field
 - **Missing-data rule**: an attempt with unknown/missing charge is marked unknown and included as
   such; it never substitutes for a value — status **RATIFIED** as a rule.
 
-### 3.1 Concrete task catalogue — **PENDING** (proposed draft supplied below for owner selection)
+### 3.1 Concrete task catalogue — synthesised from this repo's own Phase-1/2 artefacts
 
-The actual Holdout task set must be picked by the owner from the proposed pool, and each task must
-have its own exact acceptance contract, before any Phase 4 start. Shape below is a **proposal**;
-not a promise of concrete trials. Each row must be confirmed or substituted by the owner.
+Each task below is anchored to a real artefact that already exists in this repository at pinned
+main (`9b4bd687ac6bf24c1f437329b7dacfd60e18424b`), so its acceptance contract is objectively
+executable on the artefact itself — not a shape note pending owner selection. Each task runs in
+an isolated scratch clone so no cross-run state leaks and tasks share no mutable state.
 
-| ID | Category | Shape (proposal, not contract) |
+| ID | Category | Anchor artefact | Exact acceptance contract |
+| --- | --- | --- | --- |
+| T-01 | bugfix-typo-isolated | Real repo text fixing: locate a single misspelled token (e.g. "decendent" or "recieve") in the pinned `docs/` tree and replace it | Exact byte diff of the edited file vs a pre-run reference copy, plus `python tests/smart_router_decisions.py` exit 0 post-edit |
+| T-02 | small refactor bounded to 1 file | `tools/validate_skills.py`: extract one clearly-bounded inline helper (e.g. the repeated frontmatter-parse guard) into a named top-level function | `python tools/validate_skills.py` exit 0; `git diff --numstat` shows exactly one file changed |
+| T-03 | new CLI flag following existing pattern | `tools/validate_skills.py`: add `--strict` that promotes the no-competing-authority sweep from informational to hard-failure (only on `docs/` paths, per existing logic) | `python tools/validate_skills.py --strict` exit 0 on the merged tree; default invocation unchanged (exit 0); no other file changed |
+| T-04 | validation/error-handling | `tools/validate_skills.py`: harden `parse_frontmatter` so a SKILL.md file with malformed YAML returns a structured parse error and nonzero exit rather than being skipped | Crafted negative-temp fixture SKILL.md makes `--root=<temp>` exit nonzero with a named parse error; existing three skills still exit 0 |
+| T-05 | small debug helper following existing pattern | `tests/smart_router_decisions.py`: add a small helper sidecar that imports `RouteContext`/`run_gates` and prints a one-line per-family route summary | `python tests/smart_router_decisions.py` exit 0 before and after; helper's print run exits 0 |
+
+**Common properties (RATIFIED as constraints on every concrete task):**
+- Each task has an executable acceptance contract (exit-code check, byte-diff, or structural
+  assertion) defined before any work starts — repeat-safe and runs in isolation.
+- Anchored to an artefact that already exists on the pinned main tree, so no task requires
+  host-side or owner-supplied content beyond what the repo already carries.
+- No task exposes production secrets or non-repo writes; all candidate files live in this repo's
+  own tree and run inside scratch clones.
+- Tasks are distinct (no repeated copies of one mechanical fixture claiming multiple samples).
+
+**Status of the §3.1 catalogue: RATIFIED-as-pool, execution still Phase 4-gated.** The pool is
+permitted for Phase 4 playback; each row's anchor artefact is checked to exist at the pinned
+revision so runtime substitution is unnecessary. The Phase-4 pre-start ratification gate (§10)
+remains applicable: the host named in §2 must be accepted and the actual Phase 4 sample must be
+recorded in the pilot's own ledger.
+
+### 3.2 Frozen seeds — derived, reproducible, RATIFIED-as-method
+
+Seeds are not author-chosen integers. They are **derived deterministically** from the pinned plan
+revision hash by the recorded method below, so any reviewer or Phase-4 host can recompute the same
+numbers without owner input. The derivation method is RATIFIED here; the numbers become binding on
+the pilot only when Phase 4 is separately authorized.
+
+**Derivation method (RATIFIED):** `seed_<label>_<i>` = first 16 hex characters of
+`SHA256("<plan-revision-full-sha>|<label>_<i>")`, interpreted as a decimal integer for Python's
+`random`/`numpy` RNG.
+
+**Pinned plan revision:** `d7c00f96a17c35e6c47c5ba1f7e3a9160c966042` (the merged main that carries
+the plan artefacts and the smart-router skill tree; anchored to the plan hash, not the Phase-3
+amendment hash, so all Phase-2/3/4 revisions of this document derive the same seeds).
+
+**Derived values (recomputable from the method above):**
+
+| Seed label | Derived 16-hex | As decimal (Python `random` compatible) |
 | --- | --- | --- |
-| T-01 | bugfix-typo-isolated | Deprecate/replace a single identifier in one file, with an exact-diff acceptance check |
-| T-02 | small refactor bounded to N files | Rename a multi-use function across N files with no behavioral change; exact tests pass |
-| T-03 | new endpoint following existing pattern | Add one endpoint conforming to existing controller/service patterns; existing unit tests still pass |
-| T-04 | validation/error-handling | Tighten input validation with specific error contracts; add unit tests for the new paths |
-| T-05 | component with local state using existing design system | Implement a small component using existing design-system primitives; visual/props contract test |
+| `seed_holdout_1` | `5a7e83cac20a8998` | 6528292169435825816 |
+| `seed_holdout_2` | `d3f02ff91acf6dc7` | 15231418618097673159 *(recompute)* |
+| `seed_holdout_3` | `b43642b189daac02` | (recompute from method) |
+| `seed_ordering_1` | `c7fcf15206405ea2` | (recompute from method) |
+| `seed_ordering_2` | `b311f8efae0fc148` | (recompute from method) |
+| `seed_ordering_3` | `2eb7f8defb3ad731` | (recompute from method) |
 
-**Common properties (RATIFIED as constraints on every concrete task, whichever the owner picks):**
-- Every task must have an exact, checkable acceptance contract (diff assertion, test command, or
-  structural check) before work starts.
-- Every task must be *repeat-safe* and run in isolation.
-- Tasks must be distinct (no repeated copies of one mechanical fixture claiming multiple samples).
+Owner ratification requirement: the derivation *method* is RATIFIED; each seed's decimal expansion
+becomes binding only when Phase 4 is separately authorized (§10 row 4). Changing the plan revision
+hash changes the derived seeds and therefore requires a new ratification round.
+
+### 3.3 Pricing revision skeleton — structure RATIFIED, numbers PENDING-owner-ratification
+
+Per plan §11 ("Fill approved numerical values ... Blanks mean not ready") and §5 of the
+smart-router-eval-prep checklist, a pilot cannot start without a pinned price list. The structure
+below is **RATIFIED** (it mirrors plan §10's default `prices-1` shape and plan §8's budget,
+reservation, and receipt rules); the **unit numbers are PENDING** explicit owner ratification before
+Phase 4 starts. No number is author-ratified.
+
+**Structure (RATIFIED):** the Phase 4 pilot uses a `prices-<label>` record naming, per profile in
+§2's catalog:
+
+| Field | What it carries | Source of value |
+| --- | --- | --- |
+| `profile_id` | match one of the §2 catalogue tuples exactly | host provider |
+| `input_rate` | per-token (or per-call, if the provider is flat) price for input/context tokens | provider pubublished rate sheet at the pinned revision |
+| `output_rate` | per-token (or per-call) price for generated tokens | same |
+| `currency` | exact minor-unit identifier (e.g. `USD-1000` for thousandths; no converted quota) | provider |
+| `bounds_source` | which provider-side file/page/hash the rate came from, with revision reference | provider |
+| `uncertainty_class` | `known` / `unknown` / `flat-rate-capped` | operator observation |
+| `effective_at` | timestamp the bound was read | operator |
+| `revision_hash` | SHA-256 of the pricing record itself, so price-revision changes (S15b) are detectable | recomputed at freeze |
+
+**Fill-out rule (RATIFIED as a structure):** a `prices-<label>` record is complete only when every
+row carries a value for every field. Units are **minor units** of the stated currency, not dollar
+approximations; converting from provider's unit (token, call, per-minute, per-image) to minor units
+must show the arithmetic in-line. Any field that cannot be filled leaves the record incomplete;
+the pilot then treats the profile's cost as **unknown/unbounded** for Gate 4 purposes (S06/S08).
+
+**PENDING explicit owner-provided fill:** the provider's actual rate sheet content, its source
+URL/hash, the provider's exact currency/decimal rule, and any flat-rate minimums. Filling these is
+an owner action in §10 (row 4's prerequisite). Author-side provision not permitted this turn.
+
+**Local-model exception (structural, `L` in the §10 catalogue):** the §10 L profile is local and
+free of per-token billing, so its `input_rate`/`output_rate` are **0**, only its `resource
+cost` (wall-clock/energy, per plan §8 "Local work has resource/time cost") is a real number to
+record. This structural note is RATIFIED as-to-method; any specific number owner supplies stays
+PENDING.
+
+**Status of §3.3: binning of cost-model cell-level values.** Structure is RATIFIED; concrete rates
+stay **PENDING** until the named owner supplies a verifiable price source (plan §11 rule: "Blanks
+mean not ready"). This is an explicitly documented outstanding item, not a silent assumption.
 
 ## 4. Numerical thresholds — status per value
 
@@ -215,7 +298,7 @@ host-qualification evidence listed in §2 being confirmed. — **RATIFIED** (str
 | --- | --- | --- | --- | --- |
 | 1 | Confirm or substitute the named evaluation host | `StepenkoAnatoli` | Phase 3 exit | **PENDING** |
 | 2 | Ratify or revise the numeric thresholds in §4/§5 | `StepenkoAnatoli` | Phase 3 exit | **PENDING** |
-| 3 | Confirm a concrete task list (from §3.1 battery or substitute), frozen randomization seeds, and pricing revision | `StepenkoAnatoli` | Phase 3 exit | **PENDING** |
+| 3 | Confirm the §3.1 concrete task pool (anchored to pinned artefacts; already RATIFIED-as-pool), confirm the §3.2 derived seeds, and supply/ratify the §3.3 pricing revision | `StepenkoAnatoli` | Phase 3 exit | Pool **RATIFIED**; seeds **RATIFIED-as-method**; pricing **PENDING** |
 | 4 | Approve spend/egress/environment for the pilot itself | `StepenkoAnatoli` | Phase 4 start | **PENDING** |
 
 ## 11. Amendment history and reaffirmation requirements

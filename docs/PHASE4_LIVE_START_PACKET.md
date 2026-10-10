@@ -69,20 +69,26 @@ amends, then commits. Signing this commit **is** the §10 row 4 owner action.
 
 ```
 - [x] Spend ceiling per task:        $1.00 (already RATIFIED in §5 of the merged preregistration)
-- [ ] Spend ceiling for full pilot:  $______ (repo proposal: $20.00 — 20 tasks × $1.00 cap,
-      with ~$0.028/task realistic Sonnet worst case this bounds total exposure well under $1.00
-      even for a full-Arm run; the $20 figure is headroom, not expected spend)
-- [ ] Egress destinations:           [provider API endpoints only — owner names which; suggestion:
-      api.anthropic.com (first-party Claude API) for cloud-S/cloud-C; api.openai.com only if the
-      cloud-C-alt row is ratified]
-- [ ] Account / key placement:       [owner chooses: Sites → Secrets, or a local env file excluded
-      from the repo; keys must never be committed — the repo's .gitignore + secrets scan already
-      guard against accidental commits]
-- [ ] Trial window / deadline:       [owner sets; expiry per qualification record default = 90
-      days from pilot start]
-- [ ] Verified prices-2 as read from: [owner initials/date; author verified 2026-10-10 against
-      docs.claude.com/en/docs/about-claude/pricing (HTTP 200, full text extracted)]
+- [~] Spend ceiling for full pilot:  **$20.00** (repo-proposed, PRE-FILLED — arithmetic: 20 tasks
+      × $1.00 ratified per-task cap = $20 absolute bound; realistic expected worst case is
+      20 × $0.028 ≈ $0.56 on Sonnet + ≈ $0.03 on Haiku, so $20 is ~35× headroom, not expected
+      spend. Confirm or lower the number.)
+- [~] Egress destinations:           **api.anthropic.com** (first-party Claude API, global endpoint,
+      standard prices — the §1-verified rows bill here) and, ONLY if the `cloud-C-alt` row is
+      ratified, **api.openai.com** for GPT-5 Mini. No other destination class is proposed.
+- [~] Account / key placement:       **Sites → Secrets** (recommended, platform-managed, never in
+      repo) OR a local `.env` file excluded by `.gitignore` — either works; the repo's existing
+      secrets scan guards accidental commits. Owner picks which of the two mechanisms.
+- [~] Trial window / deadline:       **90 days from the row-4 approval commit date** (proposed
+      default, matching the qualification-record expiry in §2; owner may shorten but SHOULD NOT
+      extend past 90 days without a fresh qualification review per plan §5 freshness rule).
+- [~] Verified prices-2 as read from: author verified 2026-10-10 against
+      docs.claude.com/en/docs/about-claude/pricing (HTTP 200, full page text extracted and row
+      values confirmed verbatim). Owner stamps initials/date here as the second-eye check.
 ```
+
+**Legend:** `[x]` = already ratified elsewhere; `[~]` = pre-filled by this packet, owner confirms
+or amends at signing; nothing in this form is signed by authority it doesn't already have.
 
 **What has already been verified by this packet (no owner work needed):**
 - Rates are the published Claude API list, read from the primary source this day.
@@ -92,7 +98,8 @@ amends, then commits. Signing this commit **is** the §10 row 4 owner action.
 
 ## 4. The one thing that still needs the owner
 
-1. Fill in the 6 bracketed fields in §3 and commit the form — that commit *is* the §10 row 4
-   approval, and it unlocks live dispatch authorization on this scope.
+1. Turn each `[~]` in §3 into `[x]` (or amend the pre-filled value), commit — that commit *is* the
+   §10 row 4 approval, and it unlocks live dispatch authorization on this scope. All proposed
+   values are Wildcats: amendable, not ratified-by-this-text alone.
 2. Name the §2/P02 reviewer so the "reviewer" qualification field can be filled (one name, see
    `docs/P02_REVIEW_BRIEF.md` for the exact checklist handed them).

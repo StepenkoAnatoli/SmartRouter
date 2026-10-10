@@ -15,10 +15,10 @@ Run in order; each must satisfy before continuing:
 
 ```bash
 [ "$(git rev-parse HEAD)" = "$(git ls-remote origin main | cut -f1)" ] && echo parity-OK      # on the pushed tree
-python tools/run_regression.py                                  # 9 checks, exit 0
+python tools/run_regression.py                                  # 10 checks, exit 0
 python tools/check_secrets.py                                   # clean, 0 hits
 git config core.hooksPath                                       # prints .githooks (pre-commit
-                                                                #  runs the same 9-check gate on every
+                                                                #  runs the same 10-check gate on every
                                                                 #  commit; a failing gate blocks the push)
 mkdir -p tools/task_state                                        # per-task state dir (gitignored) for --task-store
 

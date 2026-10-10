@@ -37,9 +37,15 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
+try:
+    from task_persistence import TaskStateStore, ResumableTasks
+except ImportError:  # direct import when repo root on path
+    from tools.task_persistence import TaskStateStore, ResumableTasks
+
 REPO_ROOT = Path(__file__).resolve().parent.parent
 PRICES_PATH = REPO_ROOT / "tools" / "prices-2.json"
 LEDGER_DEFAULT = REPO_ROOT / "tools" / "pilot_ledger.jsonl"
+TASK_STATE_DEFAULT = REPO_ROOT / "tools" / "task_state"
 
 REASON_MAX = 512  # bounded ledger lines, per the pilot observation rules
 
@@ -86,6 +92,7 @@ class LiveDispatcher:
         now_fn: Callable[[], float] = time.time,
         dispatch_fn: Optional[Callable[[str, str], Tuple[int, int]]] = None,
         confirm_egress: bool = False,
+        task_store: Optional[Path] = None,
     ) -> None:
         caps = prices["pilot_caps"]
         self.caps = CapConfig(
@@ -102,11 +109,17 @@ class LiveDispatcher:
         self.confirm_egress = confirm_egress
         self.pilot_spent = 0.0
         self._tasks: Dict[str, Dict[str, Any]] = {}
+        # optional per-task state persistence — attempt counters + wall-clock
+        # anchor survive process restarts (plan §7: restart/rename never resets)
+        if task_store is not None:
+            self._resumer = ResumableTasks(TaskStateStore(Path(task_store), now_fn=now_fn))
+        else:
+            self._resumer = None
 
     # -- internals ---------------------------------------------------------
     def _task(self, task_id: str) -> Dict[str, Any]:
         if task_id not in self._tasks:
-            self._tasks[task_id] = {
+            init = lambda: {  # noqa: E731 — clear inline shape for the initializer
                 "task_id": task_id,
                 "attempts": 0,
                 "spent": 0.0,
@@ -114,6 +127,11 @@ class LiveDispatcher:
                 "repairs": 0,
                 "last_profile": "",
             }
+            if self._resumer is not None:
+                st = self._resumer.load_or_init(task_id, init)
+            else:
+                st = init()
+            self._tasks[task_id] = st
         return self._tasks[task_id]
 
     def _append(self, entry: LedgerEntry) -> None:
@@ -220,6 +238,8 @@ class LiveDispatcher:
         if is_repair:
             st["repairs"] += 1
         st["last_profile"] = profile_id
+        if self._resumer is not None:
+            self._resumer.persist(st)
         e = LedgerEntry(now, task_id, st["attempts"], profile_id, in_toks, out_toks, cost,
                         "dispatched", f"attempt {st['attempts']} of {self.caps.max_attempts}")
         self._append(e)
@@ -244,6 +264,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     ap.add_argument("--live", action="store_true",
                     help="wire the real Anthropic adapter as dispatch_fn (requires .env key and --confirm-egress)")
     ap.add_argument("--ledger", default=str(LEDGER_DEFAULT))
+    ap.add_argument("--task-store", default=None,
+                    help="per-task state dir so attempt counters + 300s deadline survive "
+                         "process restarts (default: off = per-process counters, as before)")
     args = ap.parse_args(argv)
 
     prices = load_prices(PRICES_PATH)
@@ -257,9 +280,9 @@ def main(argv: Optional[List[str]] = None) -> int:
             print(json.dumps({"decision": "dispatch-refused", "reason": str(e)}), file=sys.stderr)
             return 2
 
+    task_store = Path(args.task_store) if args.task_store else None
     d = LiveDispatcher(prices, Path(args.ledger), confirm_egress=args.confirm_egress,
-                       dispatch_fn=dispatch_fn) if args.live or args.confirm_egress else \
-        LiveDispatcher(prices, Path(args.ledger), confirm_egress=False)
+                       dispatch_fn=dispatch_fn, task_store=task_store)
     e = d.attempt(args.task_id, args.profile, args.request,
                   work_bound=args.work_bound, review_bound=args.review_bound,
                   expected_in=args.expected_in_tokens, expected_out=args.expected_out_tokens)

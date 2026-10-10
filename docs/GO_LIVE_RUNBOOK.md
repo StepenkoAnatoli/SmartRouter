@@ -113,7 +113,9 @@ Fail actions:
   mocked-transport tests — the first real call IS the moment this runbook reaches step 3. Its
   correctness is verified by the dispatch's own usage figures matching what `pilot_report`
   recomputes (step 4's intact check).
-- Wall-clock deadline enforcement is per dispatcher process; a task spanning process restarts
-  needs per-task state persistence (not implemented — fine for short §3.1 tasks).
+- Wall-clock + counters across restarts: pass `--task-store tools/task_state` to persist
+  per-task attempts/spent/repairs and the task's `started` anchor to JSON (atomic writes), so
+  the 300 s deadline applies to the task's WHOLE lifetime, not per dispatcher process.
+  Without the flag, behavior is per-process counters as before.
 - Cache-credit accounting, `--strict`-non-empty promotion, and consumer-owned phases (5–7) are
   out of scope, unchanged from the live-start packet.

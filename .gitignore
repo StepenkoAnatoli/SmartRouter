@@ -16,3 +16,4 @@ tools/*.ledger.jsonl
 # --- OS noise ---
 Thumbs.db
 .DS_Store
+tools/task_state/

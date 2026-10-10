@@ -20,6 +20,8 @@ python tools/check_secrets.py                                   # clean, 0 hits
 git config core.hooksPath                                       # prints .githooks (pre-commit
                                                                 #  runs the same 9-check gate on every
                                                                 #  commit; a failing gate blocks the push)
+mkdir -p tools/task_state                                        # per-task state dir (gitignored) for --task-store
+
 python tools/live_dispatcher.py --live \                        # adapter present:
   --profile cloud-C --task-id preflight --request x \           # refusal expected WITHOUT .env
   --work-bound 0.01 --review-bound 0.01 --ledger /tmp/preflight.jsonl; echo "expect exit 2"
@@ -70,8 +72,13 @@ python tools/live_dispatcher.py \
   --profile cloud-C \
   --task-id live-001 --request "<task prompt from the §3.1 contract>" \
   --work-bound 0.01 --review-bound 0.01 \
-  --ledger tools/pilot_ledger.jsonl
+  --ledger tools/pilot_ledger.jsonl \
+  --task-store tools/task_state
 ```
+
+`--task-store tools/task_state` is REQUIRED in the pilot invocation: it persists the 300 s
+whole-task deadline and the attempt/repair counters across restarts (§6 limitation closed
+by this flag; `tools/test_task_persistence.py` pins the behavior).
 
 Expected: **exit 0**, ledger line `"decision": "dispatched"` with a **nonzero `cost_usd`**
 computed from the adapter's actual usage tokens against the prices-2 rates. Refusal cases

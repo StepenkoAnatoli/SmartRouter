@@ -10,7 +10,7 @@
 | --- | --- | --- | --- |
 | 1 | Planning documents, REVIEW_BRIEF, acceptance packets, plan-§10 fixtures encoded | **Closed at plan revision `d7c00f96a17c35e6c47c5ba1f7e3a9160c966042`** | docs/DEVELOPMENT_PLAN.md; REVIEW_BRIEF_4654158.md; ACCEPTANCE_PACKET_b7e4827.md |
 | 2 | Canonical `smart-router` skill + review/eval-prep siblings, 3-skill tree, qualification/authority separators | **Closed** | skills/smart-router{,-review,-eval-prep}/ (3 skills validated by tools/validate_skills.py, exit 0) |
-| 3 | Preregistration: task pool, host and controls, seeds, pricing structure, thresholds | **Closed** — merged chain 11f677da (PR #4) → 63a5cee (PR #5) → 6d20b04 (PR #8 task/seeds/pricing) → 23a9ef0 + merge c69352c (PR #9 ratification + §10 catalog/prices-1 non-live fill) | docs/PHASE3_PREREGISTRATION.md, statuses RATIFIED/PENDING per item |
+| 3 | Preregistration: task pool, host and controls, seeds, pricing structure, thresholds | **Closed — owner-deviation closure** at countersign `6d0b140` — merged chain 11f677da (PR #4) → 63a5cee (PR #5) → 6d20b04 (PR #8 task/seeds/pricing) → 23a9ef0 + merge c69352c (PR #9 ratification + §10 catalog/prices-1 non-live fill); formal exit in [PHASE3_ACCEPTANCE_RECORD.md](PHASE3_ACCEPTANCE_RECORD.md) with owner acknowledgement in its §4; countersign row in [P02_REVIEW_RECORD.md §5](P02_REVIEW_RECORD.md); strict-P02 upgrade path in [P02_REVIEWER_DESIGNATION.md](P02_REVIEWER_DESIGNATION.md) | docs/PHASE3_PREREGISTRATION.md, statuses RATIFIED/PENDING per item |
 | 4 | Pilot evaluation产出 report fields | **Closed for the non-live scope** — 5/5 §3.1 contracts executed on SR-PHASE3-LOCAL; report fields complete | docs/PHASE4_PILOT_REPORT.md |
 | 5–7 | Consumer integrations (Research-Kit governance/authority; Moonzila staged advisory UI; roadmap approvals) | **NOT executed — consumer-owned by design** | plan §13/§16: consumer phases require *their* owners' approvals; plan doc §12 explicitly says these "should NOT be done now" by this project |
 | Live Phase 4 | Real-provider pilot (spend/egress) | **Open by design** — gated by real rate sheets, live qualification records, §10 row 4 | docs/PHASE3_PREREGISTRATION.md §10 row 4, §12.3 |
@@ -40,6 +40,16 @@ and owner-attributed commit messages:
 | #8 | Concrete task pool, derived seeds, pricing skeleton | `09fd8de` |
 | #9 | Host name SR-PHASE3-LOCAL + §4/§5 threshold ratification + §12 non-live catalog/price fill | `c69352c` |
 
+**Exit status upgrade, 2026-10-10:** the owner countersigned [P02_REVIEW_RECORD.md §5](P02_REVIEW_RECORD.md)
+in commit `6d0b140` ("Countersign P02_REVIEW_RECORD §5 as owner-deviation closure; R-D1 closed under
+the recorded deviation"), and a separate designated-reviewer acceptance pass —
+[PHASE3_ACCEPTANCE_RECORD.md](PHASE3_ACCEPTANCE_RECORD.md) @ `81edfa7` — re-derived every [RECHECK]
+item fresh on that tree and recorded the owner acknowledgement in its §4. **Phase 3 exit is therefore
+formally recorded as owner-deviation-closed at `6d0b140`** (see §1 phase ledger). The upgrade path to
+a *strictly valid* P02 signature — a fresh non-author agent session in a scratch clone — is specified
+in [P02_REVIEWER_DESIGNATION.md](P02_REVIEWER_DESIGNATION.md) and stays open; running it does not
+redo the derivation, it only upgrades the signature's independence class.
+
 **This is honest bookkeeping, not a claimed reviewer approval.** Any future re-audit that wants a
 formal P02-style independence check can run the delta between `6d20b04` and `23a9ef0` against the
 reviewer checklist in `skills/smart-router-review/` — the record says plainly who authorized the
@@ -53,6 +63,12 @@ merge and why the normal step was not used.
 2. **Phase 5** — Research-Kit integration (governance/authority decision) — Research-Kit owner.
 3. **Phase 6** — Moonzila first advisory UI implementation — Moonzila owner; design note exists.
 4. **Phase 7** — full Moonzila integration — Moonzila owner; plan explicitly defers.
+
+**Resolved this session (was owner-open):** the qualification **reviewer-designation item** is
+done — the signed designation instrument is [docs/P02_REVIEWER_NOTICE.md](docs/P02_REVIEWER_NOTICE.md),
+naming the plan-§5 qualification reviewer of record; the companion fresh-session procedure for the
+strict-P02 countersignature is [docs/P02_REVIEWER_DESIGNATION.md](docs/P02_REVIEWER_DESIGNATION.md)
+(that countersignature itself remains owner-actionable, not yet executed).
 
 ## 5. Tooling installed with this commit
 

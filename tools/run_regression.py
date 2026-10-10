@@ -27,6 +27,7 @@ CHECKS = [
     ("test_dispatch_adapter", [sys.executable, "tools/test_dispatch_adapter.py"]),
     ("test_pilot_close", [sys.executable, "tools/test_pilot_close.py"]),
     ("test_task_persistence", [sys.executable, "tools/test_task_persistence.py"]),
+    ("test_task_crosscheck", [sys.executable, "tools/test_task_crosscheck.py"]),
     ("test_pilot_report", [sys.executable, "tools/test_pilot_report.py"]),
     ("test_arm_matrix", [sys.executable, "tools/test_arm_matrix.py"]),
     ("test_secrets_env_guard", [sys.executable, "tools/test_secrets_env_guard.py"]),

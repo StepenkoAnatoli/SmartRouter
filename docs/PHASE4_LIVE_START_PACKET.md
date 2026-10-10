@@ -72,24 +72,27 @@ Signing this commit **is** the §10 row 4 owner action.
 
 ```
 - [x] Spend ceiling per task:        $1.00 (already RATIFIED in §5 of the merged preregistration)
-- [x] Spend ceiling for full pilot:  **$20.00** (repo-proposed, PRE-FILLED — arithmetic: 20 tasks
+- [x] Spend ceiling for full pilot:  **$20.00** (CONFIRMED at signing — arithmetic: 20 tasks
       × $1.00 ratified per-task cap = $20 absolute bound; realistic expected worst case is
       20 × $0.028 ≈ $0.56 on Sonnet + ≈ $0.03 on Haiku, so $20 is ~35× headroom, not expected
-      spend. Confirm or lower the number.)
+      spend. Confirmed, not lowered.)
 - [x] Egress destinations:           **api.anthropic.com** (first-party Claude API, global endpoint,
-      standard prices — the §1-verified rows bill here) and, ONLY if the `cloud-C-alt` row is
-      ratified, **api.openai.com** for GPT-5 Mini. No other destination class is proposed.
-- [x] Account / key placement:       **Sites → Secrets** (recommended, platform-managed, never in
-      repo) OR a local `.env` file excluded by `.gitignore` — either works; the repo's existing
-      secrets scan guards accidental commits. Owner picks which of the two mechanisms.
-- [x] Trial window / deadline:       **90 days from the row-4 approval commit date** (proposed
-      default, matching the qualification-record expiry in §2; owner may shorten but SHOULD NOT
-      extend past 90 days without a fresh qualification review per plan §5 freshness rule).
-- [x] Verified prices-2 as read from: author verified 2026-10-10 (two passes, same day — second
-      pass confirmed HTTP 302→200 at the new docs URL `platform.claude.com/docs/en/about-claude/
-      pricing`) against docs.claude.com/en/docs/about-claude/pricing; full page text extracted and
-      row values confirmed verbatim both times. Owner stamps initials/date here as the third-eye
-      check.
+      standard prices — the §1-verified rows bill here) — CONFIRMED, this endpoint ONLY.
+      api.openai.com is NOT approved: the `cloud-C-alt` row's cross-check remains owner-pending and
+      that endpoint stays in `egress_endpoints_conditional` of tools/prices-2.json. No other
+      destination class is approved.
+- [x] Account / key placement:       **local `.env` file excluded by `.gitignore`** (CONFIRMED
+      mechanism; not Sites → Secrets). Keys never committed — the repo's .gitignore + existing
+      secrets scan guard against accidental commits.
+- [x] Trial window / deadline:       **90 days from the row-4 approval commit date** (CONFIRMED
+      default rather than amended, matching the qualification-record expiry in §2; the
+      SHOULD-NOT-EXTEND-PAST-90-DAYS freshness rule of plan §5 applies as written).
+- [x] Verified prices-2 as read from: **SA / 2026-10-10** (third-eye stamp at signing) — author
+      verified 2026-10-10 (two passes, same day — second pass confirmed HTTP 302→200 at the new
+      docs URL `platform.claude.com/docs/en/about-claude/pricing`) against
+      docs.claude.com/en/docs/about-claude/pricing; full page text extracted and row values
+      confirmed verbatim both times. URL-recheck stamp in tools/prices-2.json
+      `verification_tracking`.
 ```
 
 **Legend:** `[x]` = already ratified elsewhere; `[~]` = pre-filled by this packet, owner confirms

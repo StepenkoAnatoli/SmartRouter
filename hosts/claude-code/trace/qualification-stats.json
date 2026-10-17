@@ -1,0 +1,300 @@
+{
+  "_comment": "derived by route.mjs rate from ledger.jsonl and the decision files; regenerated on every run, never hand-edited",
+  "calibration": {
+    "profiles": {
+      "cc-fable-high": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        }
+      },
+      "cc-fable-medium": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        }
+      },
+      "cc-fable-xhigh": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        }
+      },
+      "cc-haiku-high": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 1,
+          "pass": 0,
+          "ungraded": 0
+        }
+      },
+      "cc-haiku-low": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 1,
+          "pass": 0,
+          "ungraded": 0
+        }
+      },
+      "cc-haiku-medium": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 1,
+          "pass": 0,
+          "ungraded": 0
+        }
+      },
+      "cc-opus-high": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        }
+      },
+      "cc-opus-medium": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        }
+      },
+      "cc-sonnet-high": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 1,
+          "pass": 0,
+          "ungraded": 0
+        }
+      },
+      "cc-sonnet-low": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        }
+      },
+      "cc-sonnet-medium": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        }
+      },
+      "opus-xhigh (no policy profile)": {
+        "fix": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "pin-tests": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        },
+        "review": {
+          "fail": 0,
+          "pass": 1,
+          "ungraded": 0
+        }
+      }
+    },
+    "runs": [
+      {
+        "observations-sha256": "460342423f9c05d271f35939d4e5656508411abf13903c96c2f90a3b25ab3da2",
+        "run": "calibration-1"
+      }
+    ]
+  },
+  "ledger-sha256": "c707a92e3e17c682354f717abb83ce8db624b8b3eaddfe38da72550c71586e6d",
+  "outcome-records": 10,
+  "outcomes-counted": 8,
+  "policy-revision": "host-policy-2",
+  "proposals": [],
+  "stats": {
+    "cc-fable-high": {
+      "review": {
+        "accepted": 1,
+        "blocked": 0,
+        "cancelled": 0,
+        "cost-overrun": 0,
+        "deviations": 1,
+        "escalated": 0,
+        "partial": 0,
+        "verification-failed": 0
+      }
+    },
+    "cc-opus-high": {
+      "build-ui": {
+        "accepted": 1,
+        "blocked": 0,
+        "cancelled": 0,
+        "cost-overrun": 0,
+        "deviations": 0,
+        "escalated": 0,
+        "partial": 0,
+        "verification-failed": 1
+      },
+      "fix": {
+        "accepted": 2,
+        "blocked": 0,
+        "cancelled": 0,
+        "cost-overrun": 0,
+        "deviations": 0,
+        "escalated": 0,
+        "partial": 0,
+        "verification-failed": 0
+      },
+      "review": {
+        "accepted": 3,
+        "blocked": 0,
+        "cancelled": 0,
+        "cost-overrun": 0,
+        "deviations": 0,
+        "escalated": 0,
+        "partial": 0,
+        "verification-failed": 0
+      }
+    }
+  },
+  "usage": {
+    "five_hour": {
+      "considered": 0,
+      "current": 0.24,
+      "max-observed": null,
+      "observed": [],
+      "ratified-at": null,
+      "skipped": {
+        "negative-delta": 0,
+        "reset": 0,
+        "spanning": 1,
+        "unknown-tokens": 0,
+        "zero-tokens": 0
+      }
+    },
+    "seven_day": {
+      "considered": 0,
+      "current": 0.06,
+      "max-observed": null,
+      "observed": [],
+      "ratified-at": null,
+      "skipped": {
+        "negative-delta": 0,
+        "reset": 0,
+        "spanning": 1,
+        "unknown-tokens": 0,
+        "zero-tokens": 0
+      }
+    }
+  },
+  "usage-proposals": [],
+  "usage-sha256": "cf07f6a3a3f425e92f6ca5f88b9fa9c9310b4d97171c8b56c76db42c88c2e55b"
+}
